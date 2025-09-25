@@ -1,0 +1,9 @@
+// src/main.scss
+
+// 1. Importa los estilos globales.
+//    Esto incluye las reglas de `_globals.scss` en el CSS.
+@use 'styles/globals';
+
+// 2. Importa los estilos de los componentes.
+//    Esto incluye las reglas de `_buttons.scss` en el CSS.
+@use 'styles/components/buttons';

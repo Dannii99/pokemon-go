@@ -1,0 +1,18 @@
+// ¡Solo necesitas esta línea para acceder a TODO!
+@use '../utils';
+
+
+.button-primary {
+  @include utils.flex-center; // Usamos el mixin con su namespace
+  
+  background-color: utils.$primary-color;
+  color: white;
+  border-radius: utils.$border-radius;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
