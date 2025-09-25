@@ -1,0 +1,6 @@
+// src/styles/index.scss
+
+// Reenvía todas las variables y mixins para que estén
+// disponibles para cualquier archivo que importe este "hub".
+@forward 'variables';
+@forward 'mixins';

@@ -1,0 +1,50 @@
+@use 'variables' as *; // Importamos las variables para acceder a $breakpoints
+
+
+@mixin responsive($breakpoint) {
+  // Verificamos si el breakpoint existe en nuestro mapa
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Si existe, creamos la media query
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    // Si no existe, mostramos un error en la consola
+    @warn "Breakpoint '#{$breakpoint}' no encontrado. Breakpoints disponibles: #{map-keys($breakpoints)}.";
+  }
+}
+
+@mixin flex-center($direction: 'row') {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: $direction;
+}
+
+@mixin truncate-text {
+  white-space: nowrap;      // Evita que el texto salte a la siguiente línea
+  overflow: hidden;         // Oculta el texto que se desborda
+  text-overflow: ellipsis;  // Añade los '...'
+}
+
+@mixin cover-position($position: absolute) {
+  position: $position;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@mixin size($width, $height: $width) { // Si no se especifica alto, usa el valor del ancho
+  width: $width;
+  height: $height;
+}
+
+.contenedor-centrado {
+  @include flex-center;
+}
+
+.contenedor-vertical {
+  // Centra elementos en una columna
+  @include flex-center('column');
+}
