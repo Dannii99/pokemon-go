@@ -23,6 +23,8 @@ export default function Home() {
   const [prevUrl, setPrevUrl] = useState<string | null>(null);
   const limit = 21;
 
+  console.log(pokemonsList)
+
   // ─── Efecto principal ─────────────────────────────────────
   useEffect(() => {
     const fetchData = async () => {
