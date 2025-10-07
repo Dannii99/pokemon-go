@@ -7,7 +7,8 @@ import api from "./axios.config";
  */
 export const getPokemons = async (limit = 20, offset = 0) => {
   const response = await api.get(`pokemon?limit=${limit}&offset=${offset}`);
-  return response.data.results;
+ const { results, next, previous, count } = response.data;
+  return { results, next, previous, count };
 };
 
 /**

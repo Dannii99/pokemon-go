@@ -12,31 +12,34 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   // ─── Estados ──────────────────────────────────────────────
-  const [pokemonBanner, setPokemonBanner] = useState<PokemonDetail | null>(
-    null
-  );
-
+  const [pokemonBanner, setPokemonBanner] = useState<PokemonDetail | null>(null);
   const [pokemonsList, setPokemonsList] = useState<PokemonList[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [filtered, setFiltered] = useState<Pokemon[]>([]);
   const [types, setTypes] = useState<string[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [nextUrl, setNextUrl] = useState<string | null>(null);
+  const [prevUrl, setPrevUrl] = useState<string | null>(null);
+  const limit = 21;
 
   // ─── Efecto principal ─────────────────────────────────────
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Peticiones paralelas
-        const [bannerData, bannerDesc, pokeList, pokeTypes] = await Promise.all(
-          [
-            getPokemonByName("charizard"),
-            getPokemonDescription("charizard"),
-            getPokemons(21, 0),
-            getPokemonTypes(),
-          ]
-        );
+      const [bannerData, bannerDesc, pokeData, pokeTypes] = await Promise.all([
+        getPokemonByName("charizard"),
+        getPokemonDescription("charizard"),
+        getPokemons(limit, offset),
+        getPokemonTypes(),
+      ]);
 
-        // 🔹 Luego de tener la lista básica, pedimos los detalles
-        const fullList = await getDetailedPokemons(pokeList);
+      // Extraemos las partes necesarias
+      const { results: pokeList, next, previous } = pokeData;
+
+      // 🔹 Obtenemos detalles de cada Pokémon
+      const fullList = await getDetailedPokemons(pokeList);
+
 
         // ─── Banner ───────────────────────────────────────────
         setPokemonBanner({
@@ -48,11 +51,16 @@ export default function Home() {
         setPokemonsList(pokeList);
         setPokemons(fullList);
         setFiltered(fullList);
+
         console.log(pokeTypes);
         
 
         // ─── Tipos ────────────────────────────────────────────
         setTypes(pokeTypes.map((t: Pokemon) => t.name));
+
+         // ─── URLs para paginación ─────────────────────────────
+        setNextUrl(next);
+        setPrevUrl(previous);
         
       } catch (error) {
         console.error("Error cargando datos:", error);
@@ -60,7 +68,8 @@ export default function Home() {
     };
 
     fetchData();
-  }, []);
+  }, [offset]);
+
   // ─── Handlers ─────────────────────────────────────────────
   const handleFilter = (type: string) => {
     if (type === "all") return setFiltered(pokemons);
@@ -72,6 +81,15 @@ export default function Home() {
     setFiltered(
       pokemons.filter((p) => p.name.toLowerCase().includes(normalized))
     );
+  };
+
+  // ─── Handlers de paginación ───────────────────────────────
+  const handleNext = () => {
+    if (nextUrl) setOffset(offset + limit);
+  };
+
+  const handlePrev = () => {
+    if (prevUrl && offset > 0) setOffset(offset - limit);
   };
 
   // ─── Render ───────────────────────────────────────────────
@@ -147,6 +165,25 @@ export default function Home() {
               <PokemonCard key={p.id ?? `${p.name}-${index}`} pokemon={p} />
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="p-6">
+        <div className="flex justify-center gap-4 mt-6">
+          <button
+            disabled={!prevUrl}
+            onClick={handlePrev}
+            className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-50"
+          >
+            ← Anterior
+          </button>
+          <button
+            disabled={!nextUrl}
+            onClick={handleNext}
+            className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-50"
+          >
+            Siguiente →
+          </button>
         </div>
       </section>
     </>
