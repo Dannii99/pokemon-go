@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   // ─── Estados ──────────────────────────────────────────────
   const [pokemonBanner, setPokemonBanner] = useState<PokemonDetail | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pokemonsList, setPokemonsList] = useState<PokemonList[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [filtered, setFiltered] = useState<Pokemon[]>([]);
