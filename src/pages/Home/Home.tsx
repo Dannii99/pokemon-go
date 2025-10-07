@@ -102,9 +102,9 @@ export default function Home() {
 
   return (
     <>
-      <section className="w-full h-[45rem] p-6 bg-amber-500 bg-[url('/img/banner/bg-charizard.png')] bg-no-repeat bg-[position:center_bottom] bg-cover relative after:content-[''] after:w-full after:h-[60px] after:absolute after:left-0 after:bottom-[-31px] after:bg-[#242424] after:rounded-[50%_50%_0_0]">
+      <section className="w-full h-[29em] max-h-[45rem] p-6 bg-amber-500 bg-[url('/img/banner/bg-charizard.png')] bg-no-repeat bg-[position:center_bottom] bg-cover relative after:content-[''] after:w-full after:h-[3.75rem] after:absolute after:left-0 after:bottom-[-1.9375rem] after:bg-[#242424] after:rounded-[50%_50%_0_0] text-[clamp(15px,25px,3vw)]">
         <div className="w-full flex justify-center items-center">
-          <div className="w-full max-w-[28rem] h-32 overflow-hidden">
+          <div className="w-full max-w-[16em] h-32 overflow-hidden">
             <img
               src="img/logo/pokemon.png"
               alt="pokemon"
@@ -112,10 +112,10 @@ export default function Home() {
             />
           </div>
         </div>
-        <div className="w-full grid grid-cols-2 gap-8 ">
+        <div className="w-full grid grid-cols-2 gap-4 md:gap-8 pb-4">
           <div className="col-start-1 flex justify-center items-center">
             <div className="md:w-3/5">
-              <h1 className="text-6xl font-bold capitalize mb-4">
+              <h1 className="text-[2.40em] font-bold capitalize mb-4">
                 {pokemonBanner.name}
               </h1>
 
@@ -130,7 +130,7 @@ export default function Home() {
                 ))}
               </div>
 
-              <p className="text-sm md:text-base lg:text-xl opacity-90 mb-6">
+              <p className="text-xs sm:text-sm md:text-base lg:text-xl opacity-90 mb-6">
                 {pokemonBanner.description}
               </p>
 
