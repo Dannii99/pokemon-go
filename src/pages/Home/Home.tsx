@@ -102,7 +102,7 @@ export default function Home() {
 
   return (
     <>
-      <section className="w-full h-[45rem] p-6 bg-amber-500 bg-[url('img/banner/bg-charizard.png')] bg-no-repeat bg-[position:center_bottom] bg-cover relative after:content-[''] after:w-full after:h-[60px] after:absolute after:left-0 after:bottom-[-31px] after:bg-[#242424] after:rounded-[50%_50%_0_0]">
+      <section className="w-full h-[45rem] p-6 bg-amber-500 bg-[url('/img/banner/bg-charizard.png')] bg-no-repeat bg-[position:center_bottom] bg-cover relative after:content-[''] after:w-full after:h-[60px] after:absolute after:left-0 after:bottom-[-31px] after:bg-[#242424] after:rounded-[50%_50%_0_0]">
         <div className="w-full flex justify-center items-center">
           <div className="w-full max-w-[28rem] h-32 overflow-hidden">
             <img
