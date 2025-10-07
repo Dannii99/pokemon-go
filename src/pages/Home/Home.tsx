@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   // ─── Estados ──────────────────────────────────────────────
   const [pokemonBanner, setPokemonBanner] = useState<PokemonDetail | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pokemonsList, setPokemonsList] = useState<PokemonList[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [filtered, setFiltered] = useState<Pokemon[]>([]);
@@ -21,6 +22,8 @@ export default function Home() {
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [prevUrl, setPrevUrl] = useState<string | null>(null);
   const limit = 21;
+
+  console.log(pokemonsList)
 
   // ─── Efecto principal ─────────────────────────────────────
   useEffect(() => {
