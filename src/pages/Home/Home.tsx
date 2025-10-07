@@ -163,7 +163,7 @@ export default function Home() {
             onFilter={handleFilter}
             onSearch={handleSearch}
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-6 px-4 md:px-16 lg:px-24 xl:px-32">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-20 mt-6 px-4 md:px-16 lg:px-24 xl:px-32 pt-24">
             {filtered.map((p, index) => (
               <PokemonCard key={p.id ?? `${p.name}-${index}`} pokemon={p} />
             ))}
