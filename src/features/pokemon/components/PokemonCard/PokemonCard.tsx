@@ -1,4 +1,4 @@
-import type { Pokemon } from "@/models";
+import type { Pokemon } from "@/features/pokemon/types/pokemon.types";
 import { getTypeColor } from "@/utils/colors";
 
 interface Props {

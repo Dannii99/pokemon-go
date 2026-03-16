@@ -1,5 +1,5 @@
-import type { Pokemon, PokemonSpecies } from "@/models";
-import api from "./axios.config";
+import type { Pokemon, PokemonSpecies } from "@/features/pokemon/types/pokemon.types";
+import api from "@/services/apiClient";
 
 
 /**

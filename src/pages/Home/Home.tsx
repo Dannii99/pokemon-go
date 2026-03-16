@@ -4,16 +4,14 @@ import {
   getPokemonDescription,
   getPokemons,
   getPokemonTypes,
-} from "@/api";
-import PokemonCard from "../../components/PokemonCard/PokemonCard";
-import PokemonFilter from "../../components/PokemonFilter/PokemonFilter";
-import type { Pokemon, PokemonDetail, PokemonList } from "@/models";
+} from "@/features/pokemon/services";
+import { PokemonCard, PokemonFilter } from "@/features/pokemon/components";
+import type { Pokemon, PokemonDetail, PokemonList } from "@/features/pokemon/types";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   // ─── Estados ──────────────────────────────────────────────
   const [pokemonBanner, setPokemonBanner] = useState<PokemonDetail | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pokemonsList, setPokemonsList] = useState<PokemonList[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [filtered, setFiltered] = useState<Pokemon[]>([]);
