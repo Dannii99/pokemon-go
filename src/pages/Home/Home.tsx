@@ -8,11 +8,11 @@ import {
 import { PokemonCard, PokemonFilter } from "@/features/pokemon/components";
 import type { Pokemon, PokemonDetail, PokemonList } from "@/features/pokemon/types";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Zap } from "lucide-react";
 
 export default function Home() {
-  // ─── Estados ──────────────────────────────────────────────
   const [pokemonBanner, setPokemonBanner] = useState<PokemonDetail | null>(null);
-  const [pokemonsList, setPokemonsList] = useState<PokemonList[]>([]);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [filtered, setFiltered] = useState<Pokemon[]>([]);
   const [types, setTypes] = useState<string[]>([]);
@@ -21,57 +21,37 @@ export default function Home() {
   const [prevUrl, setPrevUrl] = useState<string | null>(null);
   const limit = 21;
 
-  console.log(pokemonsList)
-
-  // ─── Efecto principal ─────────────────────────────────────
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Peticiones paralelas
-      const [bannerData, bannerDesc, pokeData, pokeTypes] = await Promise.all([
-        getPokemonByName("charizard"),
-        getPokemonDescription("charizard"),
-        getPokemons(limit, offset),
-        getPokemonTypes(),
-      ]);
+        const [bannerData, bannerDesc, pokeData, pokeTypes] = await Promise.all([
+          getPokemonByName("charizard"),
+          getPokemonDescription("charizard"),
+          getPokemons(limit, offset),
+          getPokemonTypes(),
+        ]);
 
-      // Extraemos las partes necesarias
-      const { results: pokeList, next, previous } = pokeData;
+        const { results: pokeList, next, previous } = pokeData;
+        const fullList = await getDetailedPokemons(pokeList);
 
-      // 🔹 Obtenemos detalles de cada Pokémon
-      const fullList = await getDetailedPokemons(pokeList);
-
-
-        // ─── Banner ───────────────────────────────────────────
         setPokemonBanner({
           ...bannerData,
           description: bannerDesc,
         });
 
-        // ─── Listas de pokemons ───────────────────────────────
-        setPokemonsList(pokeList);
         setPokemons(fullList);
         setFiltered(fullList);
-
-        console.log(pokeTypes);
-        
-
-        // ─── Tipos ────────────────────────────────────────────
-        setTypes(pokeTypes.map((t: Pokemon) => t.name));
-
-         // ─── URLs para paginación ─────────────────────────────
+        setTypes(pokeTypes.map((t: { name: string }) => t.name));
         setNextUrl(next);
         setPrevUrl(previous);
-        
       } catch (error) {
-        console.error("Error cargando datos:", error);
+        console.error("Error loading data:", error);
       }
     };
 
     fetchData();
   }, [offset]);
 
-  // ─── Handlers ─────────────────────────────────────────────
   const handleFilter = (type: string) => {
     if (type === "all") return setFiltered(pokemons);
     setFiltered(pokemons.filter((p) => p.types.includes(type)));
@@ -84,109 +64,125 @@ export default function Home() {
     );
   };
 
-  // ─── Handlers de paginación ───────────────────────────────
   const handleNext = () => {
-    if (nextUrl) setOffset(offset + limit);
+    if (nextUrl) {
+      setOffset(offset + limit);
+      window.scrollTo({ top: 600, behavior: 'smooth' });
+    }
   };
 
   const handlePrev = () => {
-    if (prevUrl && offset > 0) setOffset(offset - limit);
+    if (prevUrl && offset > 0) {
+      setOffset(offset - limit);
+      window.scrollTo({ top: 600, behavior: 'smooth' });
+    }
   };
 
-  // ─── Render ───────────────────────────────────────────────
   if (!pokemonBanner) {
-    return <p className="text-gray-500 mt-8 text-center">Cargando...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse text-primary font-bold text-2xl tracking-tighter uppercase">
+          Loading Pokédex...
+        </div>
+      </div>
+    );
   }
 
   return (
-    <>
-      <section className="w-full h-[29em] max-h-[45rem] p-6 bg-amber-500 bg-[url('/img/banner/bg-charizard.png')] bg-no-repeat bg-[position:center_bottom] bg-cover relative after:content-[''] after:w-full after:h-[3.75rem] after:absolute after:left-0 after:bottom-[-1.9375rem] after:bg-[#242424] after:rounded-[50%_50%_0_0] text-[clamp(15px,25px,3vw)]">
-        <div className="w-full flex justify-center items-center">
-          <div className="w-full max-w-[16em] h-32 overflow-hidden">
-            <img
-              src="img/logo/pokemon.png"
-              alt="pokemon"
-              className="object-cover object-center w-full h-full"
-            />
-          </div>
-        </div>
-        <div className="w-full grid grid-cols-2 gap-4 md:gap-8 pb-4">
-          <div className="col-start-1 flex justify-center items-center">
-            <div className="md:w-3/5">
-              <h1 className="text-[2.40em] font-bold capitalize mb-4">
+    <main className="min-h-screen bg-background text-foreground pb-20">
+      {/* Hero Banner Section */}
+      <section className="relative w-full min-h-[500px] flex items-center justify-center overflow-hidden px-6 pt-10 pb-20">
+        {/* Background Effects */}
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(247,207,43,0.1)_0%,rgba(24,23,17,1)_70%)]" />
+        <div className="absolute -top-[10%] -left-[5%] w-[40%] h-[60%] bg-primary/10 blur-[120px] rounded-full" />
+        
+        <div className="relative z-10 w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Hero Content */}
+          <div className="flex flex-col gap-6 text-center lg:text-left">
+            <div className="flex items-center justify-center lg:justify-start gap-2">
+               <img src="/img/logo/pokemon.png" alt="Pokemon" className="h-16 object-contain" />
+            </div>
+            
+            <div className="space-y-2">
+              <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white">
                 {pokemonBanner.name}
               </h1>
-
-              <div className="flex gap-3 mb-4">
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
                 {pokemonBanner.types.map((t) => (
                   <span
                     key={t.type.name}
-                    className="bg-white/20 rounded-full px-3 py-1 text-sm font-semibold capitalize"
+                    className="px-4 py-1 rounded-full glass text-sm font-bold uppercase tracking-widest border border-primary/20 text-primary"
                   >
                     {t.type.name}
                   </span>
                 ))}
               </div>
+            </div>
 
-              <p className="text-xs sm:text-sm md:text-base lg:text-xl opacity-90 mb-6">
-                {pokemonBanner.description}
-              </p>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
+              {pokemonBanner.description}
+            </p>
 
-              <button className="bg-black text-white px-5 py-2 rounded-lg font-medium hover:bg-gray-900 transition">
-                Más detalles ⚡
-              </button>
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-4">
+              <Button size="lg" className="h-14 px-8 text-lg font-black uppercase tracking-tighter hover:scale-105 transition-transform group">
+                Details <Zap className="ml-2 size-5 fill-current group-hover:animate-bounce" />
+              </Button>
             </div>
           </div>
 
-          <div className="col-start-2 flex flex-col justify-center items-center">
-            <img
-              src="img/pokemon/charizard.png"
+          {/* Hero Image */}
+          <div className="relative flex justify-center items-center group">
+             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75 animate-pulse" />
+             <img
+              src="/img/pokemon/charizard.png"
               alt={pokemonBanner.name}
-              className="scale-x-[-1] w-full max-w-[33rem]"
+              className="relative w-full max-w-lg object-contain drop-shadow-[0_20px_50px_rgba(247,207,43,0.3)] transition-transform duration-700 group-hover:scale-110"
             />
-            {/*  <img
-            src={pokemonBanner.sprites.other["official-artwork"].front_default}
-            alt={pokemonBanner.name}
-            className="w-[30rem] object-contain drop-shadow-2xl"
-          /> */}
-            <span className="relative bottom-6 w-3/6 h-2 bg-black/40 blur-md rounded-full"></span>
           </div>
         </div>
       </section>
 
-      <section className="w-full max-w-[80rem] mx-auto">
-        <div className="p-6">
+      {/* Main Content */}
+      <section className="w-full max-w-7xl mx-auto px-6 -mt-10 relative z-20">
+        <div className="glass-dark rounded-3xl p-8 md:p-12 shadow-2xl border border-white/5">
           <PokemonFilter
             types={types}
             onFilter={handleFilter}
             onSearch={handleSearch}
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-20 mt-6 px-4 md:px-16 lg:px-24 xl:px-32 pt-24">
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20 mt-24">
             {filtered.map((p, index) => (
               <PokemonCard key={p.id ?? `${p.name}-${index}`} pokemon={p} />
             ))}
           </div>
-        </div>
-      </section>
 
-      <section className="p-6">
-        <div className="flex justify-center gap-4 mt-6">
-          <button
-            disabled={!prevUrl}
-            onClick={handlePrev}
-            className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-50"
-          >
-            ← Anterior
-          </button>
-          <button
-            disabled={!nextUrl}
-            onClick={handleNext}
-            className="px-4 py-2 bg-gray-700 text-white rounded-md disabled:opacity-50"
-          >
-            Siguiente →
-          </button>
+          {/* Pagination */}
+          <div className="flex justify-center items-center gap-6 mt-20 pt-10 border-t border-white/5">
+            <Button
+              variant="outline"
+              disabled={!prevUrl}
+              onClick={handlePrev}
+              className="h-12 w-12 rounded-full p-0 glass hover:bg-primary/20 border-white/10 text-white"
+            >
+              <ChevronLeft className="size-6" />
+            </Button>
+            
+            <div className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+               Page {Math.floor(offset / limit) + 1}
+            </div>
+
+            <Button
+              variant="outline"
+              disabled={!nextUrl}
+              onClick={handleNext}
+              className="h-12 w-12 rounded-full p-0 glass hover:bg-primary/20 border-white/10 text-white"
+            >
+              <ChevronRight className="size-6" />
+            </Button>
+          </div>
         </div>
       </section>
-    </>
+    </main>
   );
 }
