@@ -65,6 +65,7 @@ export const PokemonCard = ({ pokemon }: Props) => {
             Detalles ⚡
           </Button>
         </div>
+
       </div>
     </div>
   );

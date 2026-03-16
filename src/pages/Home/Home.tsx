@@ -82,7 +82,7 @@ export default function Home() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse text-primary font-bold text-2xl tracking-tighter uppercase">
-          Loading Pokédex...
+          Cargando Pokédex...
         </div>
       </div>
     );
@@ -125,7 +125,7 @@ export default function Home() {
 
             <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-4">
               <Button size="lg" className="h-14 px-8 text-lg font-black uppercase tracking-tighter hover:scale-105 transition-transform group">
-                Details <Zap className="ml-2 size-5 fill-current group-hover:animate-bounce" />
+                Detalles <Zap className="ml-2 size-5 fill-current group-hover:animate-bounce" />
               </Button>
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function Home() {
             </Button>
             
             <div className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
-               Page {Math.floor(offset / limit) + 1}
+               Página {Math.floor(offset / limit) + 1}
             </div>
 
             <Button

@@ -17,7 +17,7 @@ export const PokemonFilter = ({ types, onFilter, onSearch }: Props) => {
         </div>
         <input
           type="text"
-          placeholder="Search your Pokémon..."
+          placeholder="Busca tu Pokémon..."
           onChange={(e) => onSearch(e.target.value)}
           className="w-full h-14 pl-12 pr-6 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 outline-none transition-all text-lg placeholder:text-muted-foreground/50"
         />
@@ -29,7 +29,7 @@ export const PokemonFilter = ({ types, onFilter, onSearch }: Props) => {
           onClick={() => onFilter("all")}
           className="px-6 py-2 rounded-full glass hover:bg-white/10 transition-colors text-sm font-bold uppercase tracking-widest border border-white/20"
         >
-          All
+          Todos
         </button>
         {types.map((type) => (
           <button

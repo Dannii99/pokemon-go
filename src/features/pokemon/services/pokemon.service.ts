@@ -46,7 +46,7 @@ export const getPokemonDescription = async (name: string) => {
   const englishText = response.data.flavor_text_entries.find(
     (entry) => entry.language.name === "en"
   );
-  return englishText ? englishText.flavor_text : "No description available.";
+  return englishText ? englishText.flavor_text : "No hay descripción disponible.";
 };
 
 
