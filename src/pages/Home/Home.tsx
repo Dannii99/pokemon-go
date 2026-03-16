@@ -4,6 +4,7 @@ import {
   getPokemonDescription,
   getPokemonTypes,
   getPokemons,
+  getAllPokemons,
 } from "@/features/pokemon/services";
 import { PokemonCard, PokemonFilter } from "@/features/pokemon/components";
 import type { PokemonDetail } from "@/features/pokemon/types";
@@ -12,10 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Zap, ArrowRight, Swords, BarChart3, Github, Twitter, Instagram } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const navigate = useNavigate();
-  const [selectedType, setSelectedType] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   // 1. Banner (Charizard)
@@ -37,16 +38,40 @@ export default function Home() {
   });
   const types = useMemo(() => rawTypes.map((t: { name: string }) => t.name), [rawTypes]);
 
-  // 3. Preview List (First 6 pokemons)
-  const { data: previewSource = [] } = useQuery({
-    queryKey: ["pokemon-preview-source"],
-    queryFn: () => getPokemons(6, 0),
+  // 3. Full List for Search Preview
+  const { data: allPokemonList = [] } = useQuery({
+    queryKey: ["pokemon-all-names"],
+    queryFn: getAllPokemons,
+    enabled: searchQuery.length > 0,
   });
 
-  const { data: previewPokemons = [], isLoading: isLoadingPreview } = useQuery({
-    queryKey: ["pokemon-preview-details", previewSource.results],
-    queryFn: () => getDetailedPokemons(previewSource.results),
-    enabled: !!previewSource.results,
+  // 4. Preview Selection
+  const previewList = useMemo(() => {
+    if (searchQuery.length > 0) {
+      const normalized = searchQuery.toLowerCase();
+      return allPokemonList
+        .filter(p => p.name.toLowerCase().includes(normalized))
+        .slice(0, 4); // Limit to 4 for search preview
+    }
+    return null; // Fallback to standard preview
+  }, [allPokemonList, searchQuery]);
+
+  // 5. Standard Preview (First 6)
+  const { data: standardPreviewSource = [] } = useQuery({
+    queryKey: ["pokemon-standard-preview"],
+    queryFn: () => getPokemons(6, 0),
+    enabled: searchQuery.length === 0,
+  });
+
+  const activeSource = useMemo(() => {
+    if (searchQuery.length > 0) return previewList || [];
+    return standardPreviewSource.results || [];
+  }, [searchQuery, previewList, standardPreviewSource]);
+
+  const { data: displayPokemons = [], isLoading: isLoadingPreview } = useQuery({
+    queryKey: ["pokemon-home-display", activeSource],
+    queryFn: () => getDetailedPokemons(activeSource),
+    enabled: activeSource.length > 0,
   });
 
   if (!pokemonBanner) {
@@ -73,7 +98,7 @@ export default function Home() {
             </div>
             
             <div className="space-y-4">
-              <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white leading-[0.8] drop-shadow-2xl">
+              <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter text-white leading-[0.8] drop-shadow-2xl">
                 {pokemonBanner.name}
               </h1>
               <div className="flex flex-wrap justify-center lg:justify-start gap-3">
@@ -120,32 +145,52 @@ export default function Home() {
           <div className="space-y-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2">
-                    <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Vista Previa Pokédex</h2>
-                    <p className="text-muted-foreground font-medium">Descubre los ejemplares más recientes y destacados.</p>
+                    <h2 className="text-3xl font-black uppercase tracking-tighter text-white">
+                        {searchQuery ? "Resultados de búsqueda" : "Vista Previa Pokédex"}
+                    </h2>
+                    <p className="text-muted-foreground font-medium">
+                        {searchQuery 
+                          ? `Mostrando los primeros resultados para "${searchQuery}"` 
+                          : "Descubre los ejemplares más recientes y destacados."}
+                    </p>
                 </div>
                 <Button 
                     variant="link" 
                     onClick={() => navigate("/pokedex")}
-                    className="text-primary font-black uppercase tracking-widest flex items-center gap-2 hover:no-underline hover:opacity-80 transition-opacity"
+                    className={cn(
+                        "font-black uppercase tracking-widest flex items-center gap-2 hover:no-underline transition-all",
+                        searchQuery 
+                          ? "bg-primary/20 text-primary px-6 py-3 rounded-2xl border border-primary/20 hover:bg-primary/30 scale-110 gold-glow" 
+                          : "text-primary hover:opacity-80"
+                    )}
                 >
-                    Ver todos <ArrowRight className="size-5" />
+                    Ver todos {searchQuery && "los resultados"} <ArrowRight className="size-5" />
                 </Button>
             </div>
 
             <PokemonFilter
                 types={types}
-                selectedType={selectedType}
-                onFilter={(type) => { setSelectedType(type); navigate("/pokedex"); }}
-                onSearch={(q) => { setSearchQuery(q); navigate("/pokedex"); }}
+                selectedType="all"
+                isHome={true}
+                onFilter={(type) => navigate("/pokedex", { state: { type } })}
+                onSearch={(q) => setSearchQuery(q)}
             />
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-24 mt-24">
+            <div className={cn(
+                "grid gap-x-10 gap-y-24 mt-12",
+                searchQuery ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            )}>
                 {isLoadingPreview ? (
-                    Array.from({ length: 6 }).map((_, i) => (
+                    Array.from({ length: searchQuery ? 4 : 6 }).map((_, i) => (
                         <div key={i} className="h-64 rounded-3xl glass animate-pulse" />
                     ))
+                ) : displayPokemons.length === 0 && searchQuery ? (
+                    <div className="col-span-full py-20 text-center space-y-4">
+                        <p className="text-xl font-bold text-muted-foreground uppercase tracking-widest">No se encontraron coincidencias para la vista previa</p>
+                        <Button variant="outline" onClick={() => navigate("/pokedex")}>Ir a búsqueda completa</Button>
+                    </div>
                 ) : (
-                    previewPokemons.map((p, index) => (
+                    displayPokemons.map((p, index) => (
                         <PokemonCard key={p.id ?? `${p.name}-${index}`} pokemon={p} />
                     ))
                 )}
