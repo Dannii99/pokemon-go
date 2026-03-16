@@ -3,25 +3,21 @@ import {
   getPokemonByName,
   getPokemonDescription,
   getPokemonTypes,
-  getAllPokemons,
-  getPokemonsByType,
+  getPokemons,
 } from "@/features/pokemon/services";
 import { PokemonCard, PokemonFilter } from "@/features/pokemon/components";
 import type { PokemonDetail } from "@/features/pokemon/types";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Zap } from "lucide-react";
+import { Zap, ArrowRight, Swords, BarChart3, Github, Twitter, Instagram } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Home() {
-  // ─── Estado de UI ──────────────────────────────────────────
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [offset, setOffset] = useState(0);
-  const limit = 21;
 
-  // ─── Data Fetching ────────────────────────────────────────
-  
   // 1. Banner (Charizard)
   const { data: pokemonBanner } = useQuery({
     queryKey: ["pokemon-banner", "charizard"],
@@ -41,92 +37,50 @@ export default function Home() {
   });
   const types = useMemo(() => rawTypes.map((t: { name: string }) => t.name), [rawTypes]);
 
-  // 3. Dataset Base (Todos los nombres o por tipo)
-  const { data: sourceList = [], isLoading: isLoadingSource } = useQuery({
-    queryKey: ["pokemon-source", selectedType],
-    queryFn: () => selectedType === "all" ? getAllPokemons() : getPokemonsByType(selectedType),
+  // 3. Preview List (First 6 pokemons)
+  const { data: previewSource = [] } = useQuery({
+    queryKey: ["pokemon-preview-source"],
+    queryFn: () => getPokemons(6, 0),
   });
 
-  // ─── Lógica de Filtrado (Local sobre el sourceList) ──────
-  const filteredList = useMemo(() => {
-    let list = sourceList;
-    if (searchQuery) {
-      const normalized = searchQuery.toLowerCase();
-      list = list.filter((p) => p.name.toLowerCase().includes(normalized));
-    }
-    return list;
-  }, [sourceList, searchQuery]);
-
-  // ─── Paginación sobre el resultado filtrado ─────────────
-  const paginatedList = useMemo(() => {
-    return filteredList.slice(offset, offset + limit);
-  }, [filteredList, offset, limit]);
-
-  // 4. Detalles de los Pokémon visibles
-  const { data: detailedPokemons = [], isLoading: isLoadingDetails } = useQuery({
-    queryKey: ["pokemon-details", paginatedList],
-    queryFn: () => getDetailedPokemons(paginatedList),
-    enabled: paginatedList.length > 0,
+  const { data: previewPokemons = [], isLoading: isLoadingPreview } = useQuery({
+    queryKey: ["pokemon-preview-details", previewSource.results],
+    queryFn: () => getDetailedPokemons(previewSource.results),
+    enabled: !!previewSource.results,
   });
 
-  // ─── Handlers ─────────────────────────────────────────────
-  const handleFilter = (type: string) => {
-    setSelectedType(type);
-    setOffset(0); // Reset a primera página
-  };
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setOffset(0); // Reset a primera página
-  };
-
-  const handleNext = () => {
-    if (offset + limit < filteredList.length) {
-      setOffset(offset + limit);
-      window.scrollTo({ top: 600, behavior: "smooth" });
-    }
-  };
-
-  const handlePrev = () => {
-    if (offset > 0) {
-      setOffset(offset - limit);
-      window.scrollTo({ top: 600, behavior: "smooth" });
-    }
-  };
-
-  // ─── Render ───────────────────────────────────────────────
   if (!pokemonBanner) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse text-primary font-bold text-2xl tracking-tighter uppercase">
-          Cargando Pokédex...
+          Cargando Dashboard...
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground pb-20">
+    <main className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Hero Banner Section */}
-      <section className="relative w-full min-h-[500px] flex items-center justify-center overflow-hidden px-6 pt-10 pb-20">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(247,207,43,0.1)_0%,rgba(24,23,17,1)_70%)]" />
-        <div className="absolute -top-[10%] -left-[5%] w-[40%] h-[60%] bg-primary/10 blur-[120px] rounded-full" />
+      <section className="relative w-full min-h-[600px] flex items-center justify-center overflow-hidden px-6 pt-10 pb-20">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(247,207,43,0.15)_0%,rgba(24,23,17,1)_80%)]" />
+        <div className="absolute -top-[10%] -left-[5%] w-[40%] h-[60%] bg-primary/20 blur-[120px] rounded-full" />
         
         <div className="relative z-10 w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col gap-6 text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start gap-2">
-               <img src="/img/logo/pokemon.png" alt="Pokemon" className="h-16 object-contain" />
+          <div className="flex flex-col gap-8 text-center lg:text-left">
+            <div className="flex items-center justify-center lg:justify-start">
+               <img src="/img/logo/pokemon.png" alt="Pokemon" className="h-20 object-contain drop-shadow-glow" />
             </div>
             
-            <div className="space-y-2">
-              <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white">
+            <div className="space-y-4">
+              <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white leading-[0.8] drop-shadow-2xl">
                 {pokemonBanner.name}
               </h1>
               <div className="flex flex-wrap justify-center lg:justify-start gap-3">
                 {pokemonBanner.types.map((t) => (
                   <span
                     key={t.type.name}
-                    className="px-4 py-1 rounded-full glass text-sm font-bold uppercase tracking-widest border border-primary/20 text-primary"
+                    className="px-6 py-1.5 rounded-full glass text-sm font-black uppercase tracking-[0.2em] border border-primary/30 text-primary"
                   >
                     {t.type.name}
                   </span>
@@ -134,88 +88,138 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
-              {pokemonBanner.description}
+            <p className="text-xl md:text-2xl text-muted-foreground/80 leading-tight max-w-xl mx-auto lg:mx-0 font-medium">
+              Domina el campo de batalla con el poder legendario de {pokemonBanner.name}. Un icono de fuerza y fuego puro.
             </p>
 
-            <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-4">
-              <Button size="lg" className="h-14 px-8 text-lg font-black uppercase tracking-tighter hover:scale-105 transition-transform group">
-                Detalles <Zap className="ml-2 size-5 fill-current group-hover:animate-bounce" />
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-2">
+              <Button 
+                size="lg" 
+                onClick={() => navigate("/pokedex")}
+                className="h-16 px-10 text-xl font-black uppercase tracking-tighter hover:scale-105 transition-all group bg-primary text-background hover:gold-glow"
+              >
+                Explorar Pokémon <Zap className="ml-3 size-6 fill-current group-hover:animate-pulse" />
               </Button>
             </div>
           </div>
 
           <div className="relative flex justify-center items-center group">
-             <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full scale-75 animate-pulse" />
+             <div className="absolute inset-0 bg-primary/30 blur-[120px] rounded-full scale-75 animate-pulse" />
              <img
               src="/img/pokemon/charizard.png"
               alt={pokemonBanner.name}
-              className="relative w-full max-w-lg object-contain drop-shadow-[0_20px_50px_rgba(247,207,43,0.3)] transition-transform duration-700 group-hover:scale-110"
+              className="relative w-full max-w-xl object-contain drop-shadow-[0_30px_60px_rgba(247,207,43,0.4)] transition-all duration-1000 group-hover:scale-110 group-hover:-rotate-3"
             />
           </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="w-full max-w-7xl mx-auto px-6 -mt-10 relative z-20">
-        <div className="glass-dark rounded-3xl p-8 md:p-12 shadow-2xl border border-white/5">
-          <PokemonFilter
-            types={types}
-            onFilter={handleFilter}
-            onSearch={handleSearch}
-          />
-          
-          <div className="min-h-[600px] mt-24">
-            {isLoadingSource || isLoadingDetails ? (
-              <div className="flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              </div>
-            ) : filteredList.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-4 py-20">
-                <p className="text-2xl font-bold text-muted-foreground uppercase tracking-widest">
-                  No se encontraron Pokémon
-                </p>
-                <Button onClick={() => { setSelectedType("all"); setSearchQuery(""); }} variant="outline">
-                  Limpiar filtros
+      {/* Dashboard Preview Section */}
+      <section className="w-full max-w-7xl mx-auto px-6 -mt-20 relative z-20 space-y-24 pb-32">
+        <div className="glass-dark rounded-[2.5rem] p-8 md:p-14 shadow-3xl border border-white/5 backdrop-blur-2xl">
+          <div className="space-y-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Vista Previa Pokédex</h2>
+                    <p className="text-muted-foreground font-medium">Descubre los ejemplares más recientes y destacados.</p>
+                </div>
+                <Button 
+                    variant="link" 
+                    onClick={() => navigate("/pokedex")}
+                    className="text-primary font-black uppercase tracking-widest flex items-center gap-2 hover:no-underline hover:opacity-80 transition-opacity"
+                >
+                    Ver todos <ArrowRight className="size-5" />
                 </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-20">
-                {detailedPokemons.map((p, index) => (
-                  <PokemonCard key={p.id ?? `${p.name}-${index}`} pokemon={p} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Pagination */}
-          {filteredList.length > limit && (
-            <div className="flex justify-center items-center gap-6 mt-20 pt-10 border-t border-white/5">
-              <Button
-                variant="outline"
-                disabled={offset === 0}
-                onClick={handlePrev}
-                className="h-12 w-12 rounded-full p-0 glass hover:bg-primary/20 border-white/10 text-white disabled:opacity-30"
-              >
-                <ChevronLeft className="size-6" />
-              </Button>
-              
-              <div className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
-                 Página {Math.floor(offset / limit) + 1} de {Math.ceil(filteredList.length / limit)}
-              </div>
-
-              <Button
-                variant="outline"
-                disabled={offset + limit >= filteredList.length}
-                onClick={handleNext}
-                className="h-12 w-12 rounded-full p-0 glass hover:bg-primary/20 border-white/10 text-white disabled:opacity-30"
-              >
-                <ChevronRight className="size-6" />
-              </Button>
             </div>
-          )}
+
+            <PokemonFilter
+                types={types}
+                selectedType={selectedType}
+                onFilter={(type) => { setSelectedType(type); navigate("/pokedex"); }}
+                onSearch={(q) => { setSearchQuery(q); navigate("/pokedex"); }}
+            />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-24 mt-24">
+                {isLoadingPreview ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="h-64 rounded-3xl glass animate-pulse" />
+                    ))
+                ) : (
+                    previewPokemons.map((p, index) => (
+                        <PokemonCard key={p.id ?? `${p.name}-${index}`} pokemon={p} />
+                    ))
+                )}
+            </div>
+          </div>
+        </div>
+
+        {/* Feature Cards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="group relative overflow-hidden rounded-[2rem] glass-dark p-10 border border-white/5 hover:border-primary/20 transition-all duration-500 hover:gold-glow">
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500 transform group-hover:scale-110 group-hover:rotate-12">
+                    <Swords className="size-32 text-primary" />
+                </div>
+                <div className="relative z-10 space-y-6">
+                    <div className="bg-primary/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-primary/20">
+                        <Swords className="size-8 text-primary" />
+                    </div>
+                    <div className="space-y-3">
+                        <h3 className="text-3xl font-black uppercase tracking-tighter text-white">Simulador de Batalla</h3>
+                        <p className="text-muted-foreground text-lg leading-snug max-w-sm">
+                            Compara equipos, prueba enfrentamientos y simula estrategias avanzadas para dominar la liga.
+                        </p>
+                    </div>
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-black uppercase tracking-widest text-primary/60">
+                        Próximamente
+                    </span>
+                </div>
+            </div>
+
+            <div className="group relative overflow-hidden rounded-[2rem] glass-dark p-10 border border-white/5 hover:border-primary/20 transition-all duration-500 hover:gold-glow">
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500 transform group-hover:scale-110 group-hover:rotate-12">
+                    <BarChart3 className="size-32 text-primary" />
+                </div>
+                <div className="relative z-10 space-y-6">
+                    <div className="bg-primary/10 w-16 h-16 rounded-2xl flex items-center justify-center border border-primary/20">
+                        <BarChart3 className="size-8 text-primary" />
+                    </div>
+                    <div className="space-y-3">
+                        <h3 className="text-3xl font-black uppercase tracking-tighter text-white">Análisis Avanzado</h3>
+                        <p className="text-muted-foreground text-lg leading-snug max-w-sm">
+                            Estadísticas profundas, desgloses de rendimiento y tendencias de tipos en tiempo real.
+                        </p>
+                    </div>
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-black uppercase tracking-widest text-primary/60">
+                        En desarrollo
+                    </span>
+                </div>
+            </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="w-full bg-black/40 border-t border-white/5 py-12 mt-auto">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex flex-col items-center md:items-start gap-4">
+                <img src="/img/logo/pokemon.png" alt="Pokemon" className="h-10 object-contain opacity-50 grayscale hover:grayscale-0 transition-all cursor-pointer" />
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/40">
+                    © 2026 Pokémon Dash Explorer. All rights reserved.
+                </p>
+            </div>
+            
+            <div className="flex gap-8">
+                <a href="#" className="text-muted-foreground/40 hover:text-primary transition-colors"><Twitter className="size-5" /></a>
+                <a href="#" className="text-muted-foreground/40 hover:text-primary transition-colors"><Instagram className="size-5" /></a>
+                <a href="#" className="text-muted-foreground/40 hover:text-primary transition-colors"><Github className="size-5" /></a>
+            </div>
+
+            <nav className="flex gap-6">
+                <Link to="/" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-white transition-colors">Inicio</Link>
+                <Link to="/pokedex" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-white transition-colors">Pokédex</Link>
+                <Link to="/favorites" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-white transition-colors">Favoritos</Link>
+            </nav>
+        </div>
+      </footer>
     </main>
   );
 }
