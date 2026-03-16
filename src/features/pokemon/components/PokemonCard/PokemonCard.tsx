@@ -59,7 +59,7 @@ export const PokemonCard = ({ pokemon }: Props) => {
         <div className="mt-6">
           <Button 
             variant="default" 
-            size="sm"
+            size="default"
             className="w-full font-bold uppercase tracking-tighter hover:scale-105 transition-transform"
           >
             Detalles ⚡

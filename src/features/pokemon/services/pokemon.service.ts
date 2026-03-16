@@ -50,7 +50,26 @@ export const getPokemonDescription = async (name: string) => {
 };
 
 
+/**
+ * Obtiene todos los Pokémon (nombres y URLs) para búsqueda local
+ */
+export const getAllPokemons = async () => {
+  const response = await api.get(`pokemon?limit=2000`);
+  return response.data.results as { name: string; url: string }[];
+};
+
+/**
+ * Obtiene todos los tipos de Pokémon
+ */
 export const getPokemonTypes = async () => {
   const response = await api.get(`type`);
-  return response.data.results;
+  return response.data.results as { name: string; url: string }[];
+};
+
+/**
+ * Obtiene Pokémon por tipo
+ */
+export const getPokemonsByType = async (type: string) => {
+  const response = await api.get(`type/${type}`);
+  return response.data.pokemon.map((p: { pokemon: { name: string; url: string } }) => p.pokemon) as { name: string; url: string }[];
 };
