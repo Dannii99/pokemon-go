@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StreamAdmin - Multi-platform Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#924cfa",
+                        "background-light": "#f7f5f8",
+                        "background-dark": "#170f23",
+                        "surface-dark": "#251b36",
+                        "border-dark": "#3a2d52"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark flex flex-col shrink-0">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined fill-icon">rocket_launch</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-none">StreamAdmin</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Multi-platform Portal</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-symbols-outlined fill-icon">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span>Streamers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">cast</span>
+<span>Platforms</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Revenue</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-border-dark space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<div class="mt-4 p-3 rounded-xl bg-gradient-to-br from-primary to-purple-700 text-white">
+<p class="text-xs font-semibold uppercase tracking-wider opacity-80">Pro Plan</p>
+<p class="text-sm mt-1">Unlock advanced multi-stream analytics</p>
+<button class="mt-3 w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold transition-colors">Upgrade Now</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- Top Header -->
+<header class="h-16 border-b border-slate-200 dark:border-border-dark bg-white/80 dark:bg-background-dark/80 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-10">
+<div class="flex-1 max-w-xl">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-slate-100 dark:bg-surface-dark border-none rounded-xl pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary transition-all text-sm" placeholder="Search streamers, platforms, or events..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-surface-dark text-slate-600 dark:text-slate-400 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:border-border-dark"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-semibold leading-none">Danny Ospino</p>
+<p class="text-xs text-slate-500 mt-1">Administrator</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary/20" data-alt="User profile avatar of a smiling man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWUqTB7AH4N6kAeaCkTGjdhnPZ5QR_YziP1aTo20OpNzwMa49B3IKKqBug2G6_CA75bNygVvuzMfznPdfWsuiBLQSCqDAtgEFlY8t4Yd6bj1KcL2mFyZhLtPgbTkhWfexXQXh-Ac_mHuIn7ioGIIckeYRkMsNoIpgVFWqdJVHNyDkQddcxiv5uoA7fMTwmUQVNgUU9LigMiTHzC8_r97QM2Gubpu45LmwNMqTz5sNhm0CISz8dLXPu5kIKfI5dPJH7ja8Xk7TcldA"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-8 space-y-8">
+<!-- Filters & Quick Stats -->
+<div class="flex flex-col lg:flex-row gap-8 items-start">
+<div class="w-full lg:w-2/3 space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="text-2xl font-bold tracking-tight">Overview</h2>
+<div class="flex gap-2 p-1 bg-slate-100 dark:bg-surface-dark rounded-xl">
+<button class="px-4 py-1.5 rounded-lg bg-white dark:bg-background-dark shadow-sm text-sm font-medium text-primary">All</button>
+<button class="px-4 py-1.5 rounded-lg hover:bg-white dark:hover:bg-background-dark text-sm font-medium text-slate-500 transition-all">Twitch</button>
+<button class="px-4 py-1.5 rounded-lg hover:bg-white dark:hover:bg-background-dark text-sm font-medium text-slate-500 transition-all">YouTube</button>
+<button class="px-4 py-1.5 rounded-lg hover:bg-white dark:hover:bg-background-dark text-sm font-medium text-slate-500 transition-all">Kick</button>
+</div>
+</div>
+<!-- Quick Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-slate-100 dark:border-border-dark shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-green-500/10 text-green-500 rounded-lg">
+<span class="material-symbols-outlined fill-icon">sensors</span>
+</div>
+<span class="text-xs font-bold text-green-500">+12%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Total Live</p>
+<h3 class="text-3xl font-bold mt-1">1,284</h3>
+</div>
+<div class="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-slate-100 dark:border-border-dark shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-primary/10 text-primary rounded-lg">
+<span class="material-symbols-outlined fill-icon">person_add</span>
+</div>
+<span class="text-xs font-bold text-primary">+5.4%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">New Followers</p>
+<h3 class="text-3xl font-bold mt-1">42.5k</h3>
+</div>
+<div class="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-slate-100 dark:border-border-dark shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-blue-500/10 text-blue-500 rounded-lg">
+<span class="material-symbols-outlined fill-icon">schedule</span>
+</div>
+<span class="text-xs font-bold text-blue-500">+2.1%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Hours Watched</p>
+<h3 class="text-3xl font-bold mt-1">8.9M</h3>
+</div>
+</div>
+</div>
+<!-- Featured Carousel Placeholder -->
+<div class="w-full lg:w-1/3">
+<h2 class="text-lg font-bold mb-4">Featured Streamers</h2>
+<div class="relative group h-full">
+<div class="relative h-[220px] rounded-2xl overflow-hidden shadow-xl border border-border-dark">
+<img class="w-full h-full object-cover" data-alt="Gamer setup with colorful neon lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFULjhF2hL3szd-6brjKOoDO3XBBNWeadlIu7-zQkKymlj_EN6zkO-FzflQzxfM5ZPbV1zva5Xovs_vUURmjGuecWSzqNLYg41pU_N8iLXq89mTxVRt60YrGCtJ5r1nOSF2SwwYtajEXk0n6-hLIkbrshJkwIty2k4s409qfOF-OwQTPkTpeBbe6HSonreSxT1I4V4ARGvfHnjIJ6_UERrkBiAm7kpzOEnUsEX1KmB3HX7d2h6nnikM_-Bx32qMyJEXlAu5nwsDiI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-red-600 text-[10px] font-bold text-white mb-2 w-fit">FEATURED</span>
+<h4 class="text-xl font-bold text-white">Valkyrae LIVE</h4>
+<p class="text-slate-300 text-sm">Playing Variety Games</p>
+</div>
+</div>
+<div class="flex justify-center gap-2 mt-4">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+<span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Now Grid -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<h2 class="text-2xl font-bold tracking-tight">Live Now</h2>
+<span class="px-2 py-1 rounded bg-red-500/20 text-red-500 text-xs font-bold animate-pulse">2,342 STREAMS</span>
+</div>
+<button class="text-primary font-semibold text-sm hover:underline">View All</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Stream Card 1 -->
+<div class="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-border-dark group hover:border-primary/50 transition-all shadow-sm">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Screenshot of a popular video game" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcTS-TooMbrEbm7_wqgnMMElBohtFeEKz4ES4ccxBxwe3mENGn3-doEfsQquWwsgFkzT0bwuV1GlGGPSP-hI3qftk9NtkRliY5xaWTGRrxZSkXv0ZOZxn5f7CoJtm1H9t4ehDJEkLb4-i5_JJnabfn03YkPjwf84kRtl9LG6fqRECV0OaMD5Zhv_M-hYkqnbBApqKyMSMKG1Zas8dDGik7T5XH7G5i3j5-yurmdyRj20bX5ikI3eAvk8C89aFIrM-7gyu9cHbLZHI"/>
+<div class="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-white text-[10px] font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> 12.4K
+                                </div>
+<div class="absolute top-2 right-2 p-1 bg-white dark:bg-background-dark rounded-lg shadow-lg">
+<!-- Twitch Icon SVG Simulation -->
+<svg class="w-4 h-4 text-[#9146FF]" fill="currentColor" viewbox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57V4.714zm4.715 0H18v5.143h-1.714V4.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0H6zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714v9.429z"></path></svg>
+</div>
+</div>
+<div class="p-4 flex gap-3">
+<img class="w-10 h-10 rounded-full border border-slate-200 dark:border-border-dark" data-alt="Streamer profile picture of a young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAOkq1IjLE2V9xv3D3LgOAVLFlwZscSHNogPKRedgCaejdiVnbl7H4FtpqlyN1t3AUxIE2YNllOb6kM6q23hUeBja2RZTnb_0MeJ5DHeTwMFUhyEi8kTkV6nEX4kzacmhY_gpQzgndaeewQimRDlBx8vzUL1NsUvI84ivTgyWHgdic75G7dE3nitBe5-hU--sEe_DhvUGQbdn9yHKLDSyUoQrx3czpy8WI4SzgzykYkSDmk2lQHd-seU8D0kOClEQ3BXPFVtph6P0"/>
+<div class="min-w-0">
+<h4 class="font-bold text-sm truncate">Ninja Weekly Cup</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Ninja • Fortnite</p>
+</div>
+</div>
+</div>
+<!-- Stream Card 2 -->
+<div class="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-border-dark group hover:border-primary/50 transition-all shadow-sm">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Cinematic frame from a strategy game" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsNksBrI-zaI6RGse7I6Sk7X4bl3V_KT4liJ_vNedTt0zOr89eU9OKiUJ7tSw13M04u5kriYGa-XptQveDem6psQdlFNbjA5sz-03CaLZKvfD6Mgz5L19Lj_M-KnNB7duklvMVI-UPclmhrS6-tRhRNJxaYYIyJmrOwaTRsUUsngW6h2c07y_zEuZyuzSP30wjn62ZMqxxBwsBjgR46v70pY3w144PKlBRfJwxfJbvjyELk96wHJbDLRyuoFq0I67L5sIxANkxMtU"/>
+<div class="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-white text-[10px] font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> 8.9K
+                                </div>
+<div class="absolute top-2 right-2 p-1 bg-white dark:bg-background-dark rounded-lg shadow-lg">
+<!-- YT Icon SVG Simulation -->
+<svg class="w-4 h-4 text-[#FF0000]" fill="currentColor" viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.377.505 9.377.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>
+</div>
+</div>
+<div class="p-4 flex gap-3">
+<img class="w-10 h-10 rounded-full border border-slate-200 dark:border-border-dark" data-alt="Streamer profile picture of a woman smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC71Z33uZBDsgUixH6AWBsO0rvlAJIVCBvdMpZ4umKnSGSkl4o-Wmav2JX9nbRnkF3vjoD9oHgpyWA0Sa5rchnGBET3ubslWgcai4NLjD_5ylQx8CxIyVh69Rt9g11nyTPFgiUsYsLxAklcanz1Ex0DruW7ofxb4EGajDUCgah3CoarhxKnNefIOVgAzhtosvMbU_iGbNpQE0TGoBg75rkouftryevOiYJm95zy36gq2gtiu7r4xBzM4OCpB5R2aubWbHwb_uyy1hk"/>
+<div class="min-w-0">
+<h4 class="font-bold text-sm truncate">Cozy Art Stream &amp; Chill</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Pokimane • Just Chatting</p>
+</div>
+</div>
+</div>
+<!-- Stream Card 3 -->
+<div class="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-border-dark group hover:border-primary/50 transition-all shadow-sm">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Overhead view of an esports arena" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRnqKOCTPbLG28iLRwJq6Zfp_0H-a9_-xJblzGwalbV9ZU8MubVbyKyBgdV5oSu2fvLJUGRMxoorV3PvXRqp5nlGOaCIfXmYXWMwJPXk5hAd3z2gvHCSHyjxd7mA6scKvSGvsQOTdaXuQhcpxZtJW0WMer2g7yWFxB-O9ak5DG7wciGXDa3ge5esHNeqGNCbsQyFbngwllszqpINfso4Tmb0HXKWQXpVqTpbE_uaUGhcLtfdjU-tUNv9AEGWuJhzDC6RH8_QD7C70"/>
+<div class="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-white text-[10px] font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> 34.2K
+                                </div>
+<div class="absolute top-2 right-2 p-1 bg-white dark:bg-background-dark rounded-lg shadow-lg">
+<!-- Kick Icon Placeholder (Green Circle) -->
+<div class="w-4 h-4 bg-[#53FC18] rounded-sm flex items-center justify-center font-black text-[8px] text-black">K</div>
+</div>
+</div>
+<div class="p-4 flex gap-3">
+<img class="w-10 h-10 rounded-full border border-slate-200 dark:border-border-dark" data-alt="Streamer profile picture of a man with glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiureWIWfiu-XCwgC37KN7oeA8EueOiiH3uFIN9G0XVzDRjkeDT7bH0QI5hqsDxMK74gI6CILukd2tDNlpt1kmKIrxWj2vypE7I2zAzXms5-i0HxfRuIQvJtmDYg77IKGFaEa3ekqQXa6WukPIHqF9-ajCwNkPzqZiZhgeh6y-660X-IKIkff4a1hdkdAFguuDL4F0Gu3xMOzPmgT7NmhSQl0FlxlIXQc83rmkwMM52G_LMPpyY3Q1XVJddnsd97DNh3tNtIU1X4k"/>
+<div class="min-w-0">
+<h4 class="font-bold text-sm truncate">IRL TOKYO NIGHTS</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">xQc • IRL</p>
+</div>
+</div>
+</div>
+<!-- Stream Card 4 -->
+<div class="bg-white dark:bg-surface-dark rounded-2xl overflow-hidden border border-slate-100 dark:border-border-dark group hover:border-primary/50 transition-all shadow-sm">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of a keyboard with purple backlighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwhDP77CbeqlEbQp7BWvXQ8y7K1nt_uOjw9XDZ3HFTTUIZpn7f8hJpAvgbFqSyGqroaIGAvoIeBkgeCsqr82A5LgYs5mFPCYZK2I-cjt8kcU5UbT2fTW-cxNMlhiM3UsuriPIDLZr7e1A9uNo2CyZcmP6VQ7yWA27ZKz5XoZJdTUhfLJp3JUhHzytE06MjvekBKkcNZa22NwKw8hK7OxS9YkpxXAxpCEzb5WREK5Sm3hxjFQzDRBJJ4cD_PjJBvkhBfjk_F0-3eV8"/>
+<div class="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded text-white text-[10px] font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> 5.1K
+                                </div>
+<div class="absolute top-2 right-2 p-1 bg-white dark:bg-background-dark rounded-lg shadow-lg">
+<svg class="w-4 h-4 text-[#9146FF]" fill="currentColor" viewbox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57V4.714zm4.715 0H18v5.143h-1.714V4.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0H6zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714v9.429z"></path></svg>
+</div>
+</div>
+<div class="p-4 flex gap-3">
+<img class="w-10 h-10 rounded-full border border-slate-200 dark:border-border-dark" data-alt="Streamer profile picture of a woman with headphones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT28zDeXH_LjpbV-6H7KRottWjq4vh6Y6z7ud2m-Pyt4tcBAgxeSLJ8ly6mPtBj9Bt42uOl1yHIt3w5P-m3NNHX3qboXLfFh3CtH85UUu775HX-h6DVur7eCsOp-nIrekK8K1xTy35md4203SpdYv3FJQ98y-KUsHUs2lloLVjgKNzpUeQW7gClbGGUQKPbc8acQPD5NOJjNEV6d59r5iR2AnDF5No92-3_8u8-Vt7vCQTUW807GMsJsGIrY0Cso-uzLTSyLu5mKk"/>
+<div class="min-w-0">
+<h4 class="font-bold text-sm truncate">Valorant Ranked Grind</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Kyedae • Valorant</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trending Topics / Sub-Stats -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-slate-100 dark:border-border-dark">
+<h3 class="font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">trending_up</span>
+                            Trending Games
+                        </h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-16 bg-slate-200 dark:bg-background-dark rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Video game cover art style background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIXw1jxogsHnEJBYp71ByhJAKvIx4ICVyxFpqOeD6eblYb9ZCZMWWikIIEiU4xhqgBf6CLl9ZOfHEYtj9QxzBigV7xOPL7sfw34N72KkpGIriMCGCMu9UBFuC8XeJDxFUJradM18nYugTm8aZ-ZOgKIeVNyRysr-d6VlXMQ2rA3DZ5E900RGMwXtC1LJ7LGjFnpYtWzerNKFvc5VGwwLibL0le_73bdndwTQVsAfqVkkGnqLpR_7tl9zVOpVWq6GNetAKwTXCpb6k"/>
+</div>
+<div>
+<p class="text-sm font-bold">Just Chatting</p>
+<p class="text-xs text-slate-500">452K Viewers</p>
+</div>
+</div>
+<span class="text-xs font-semibold text-green-500">High Growth</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-16 bg-slate-200 dark:bg-background-dark rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Game thumbnail with vintage look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBKmIZMqXG2AVfoBtGe5PRi2oQ92f1CMMBU9DImzla31cfc_PFWnNNhE1qJXhNHVfGQraiLw6gBmyM-hn4NN04WU6hLwTakRSPHPpyPgk2n7Ais-U7u8o3Qd7rc3IbjhCA7v1rK3h1JW4NE6urC2_22Ca6G92ujYpyQZf1Y4A1wTKsKEAoHTP-Wq87n48DCOKOtvkmib8Bwq8k5oz7atGeaN06jie4zJpOneyK9dOXTbx9pF6G0_ZyEbF0rxcJiv8452Q8qqZkTt8"/>
+</div>
+<div>
+<p class="text-sm font-bold">Counter-Strike 2</p>
+<p class="text-xs text-slate-500">289K Viewers</p>
+</div>
+</div>
+<span class="text-xs font-semibold text-slate-400">Stable</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-6 rounded-2xl border border-slate-100 dark:border-border-dark">
+<h3 class="font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">notifications_active</span>
+                            Recent Alerts
+                        </h3>
+<div class="space-y-4">
+<div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-background-dark/50 border border-slate-100 dark:border-border-dark">
+<div class="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm">warning</span>
+</div>
+<div>
+<p class="text-xs font-bold">System Alert</p>
+<p class="text-[11px] text-slate-500">Twitch API latency is currently higher than normal in EU-West.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 dark:bg-background-dark/50 border border-slate-100 dark:border-border-dark">
+<div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm">info</span>
+</div>
+<div>
+<p class="text-xs font-bold">Feature Update</p>
+<p class="text-[11px] text-slate-500">Kick multi-chat integration is now available for all pro users.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
