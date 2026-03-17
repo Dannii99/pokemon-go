@@ -1,16 +1,15 @@
 import {
   getDetailedPokemons,
   getPokemonTypes,
-  getAllPokemons,
+  getAllPokemonSpecies,
   getPokemonsByType,
-  getPokemons,
+  getGeneration,
 } from "@/features/pokemon/services";
 import { PokemonCard, PokedexHeader, PokedexSidebar } from "@/features/pokemon/components";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { GENERATIONS } from "@/features/pokemon/components/PokedexSidebar";
 import { useLocation } from "react-router-dom";
 
 export default function Pokedex() {
@@ -30,50 +29,65 @@ export default function Pokedex() {
   });
   const types = useMemo(() => rawTypes.map((t: { name: string }) => t.name), [rawTypes]);
 
-  // 2. Base Source (By Type or All)
-  const { data: sourceList = [], isLoading: isLoadingSource } = useQuery({
-    queryKey: ["pokemon-source", selectedType],
-    queryFn: () => selectedType === "all" ? getAllPokemons() : getPokemonsByType(selectedType),
+  // 2. Fetch Full Species List (Source of truth for "Todas")
+  const { data: allSpecies = [] } = useQuery({
+    queryKey: ["pokemon-all-species"],
+    queryFn: getAllPokemonSpecies,
   });
 
-  // 3. Apply Filtering (Generation + Search)
-  const filteredList = useMemo(() => {
-    let list = [...sourceList];
+  // 3. Fetch Generation Details if selected
+  const { data: genDetails } = useQuery({
+    queryKey: ["gen-details", selectedGen],
+    queryFn: () => getGeneration(selectedGen),
+    enabled: selectedGen !== "all",
+  });
 
-    // Filter by Generation
-    if (selectedGen !== "all") {
-        const gen = GENERATIONS.find(g => g.id === selectedGen);
-        if (gen) {
-            // PokéAPI IDs are 1-based and match the order for the first 1025
-            // When filtering by type, the results have URLs like .../pokemon/123/
-            // We need to extract the ID from the URL to filter by range
-            list = list.filter(p => {
-                const id = parseInt(p.url.split("/").filter(Boolean).pop() || "0");
-                return id > gen.offset && id <= (gen.offset + gen.limit);
-            });
-        }
+  // 4. Fetch Type Data if selected
+  const { data: typeSource = [] } = useQuery({
+    queryKey: ["type-source", selectedType],
+    queryFn: () => getPokemonsByType(selectedType),
+    enabled: selectedType !== "all",
+  });
+
+  // 5. Apply Filtering Logic (Data-driven)
+  const filteredList = useMemo(() => {
+    // Start with the appropriate source base
+    let list = allSpecies;
+
+    // A. If type is selected, filter by type (PokéAPI type returns specific pokemons)
+    if (selectedType !== "all") {
+        const typeNames = new Set(typeSource.map(p => p.name));
+        list = list.filter(s => typeNames.has(s.name));
     }
 
-    // Filter by Search Name
+    // B. If generation is selected, filter by generation species
+    if (selectedGen !== "all" && genDetails) {
+        const genSpeciesNames = new Set(genDetails.pokemon_species.map((s: { name: string }) => s.name));
+        list = list.filter(s => genSpeciesNames.has(s.name));
+    }
+
+    // C. Search name
     if (searchQuery) {
       const normalized = searchQuery.toLowerCase();
       list = list.filter((p) => p.name.toLowerCase().includes(normalized));
     }
 
     return list;
-  }, [sourceList, selectedGen, searchQuery]);
+  }, [allSpecies, selectedType, typeSource, selectedGen, genDetails, searchQuery]);
 
-  // 4. Pagination
+  // 6. Pagination
   const paginatedList = useMemo(() => {
     return filteredList.slice(offset, offset + limit);
   }, [filteredList, offset, limit]);
 
-  // 5. Fetch Visible Details
+  // 7. Fetch Visible Details (Map species to pokemon)
   const { data: detailedPokemons = [], isLoading: isLoadingDetails } = useQuery({
     queryKey: ["pokemon-details", paginatedList],
     queryFn: () => getDetailedPokemons(paginatedList),
     enabled: paginatedList.length > 0,
   });
+
+  const isLoading = isLoadingDetails || (selectedType !== "all" && typeSource.length === 0 && selectedType !== "all");
 
   // Handlers
   const handleTypeSelect = (type: string) => {
@@ -113,11 +127,12 @@ export default function Pokedex() {
             onTypeSelect={handleTypeSelect}
             selectedGen={selectedGen}
             onGenSelect={handleGenSelect}
+            totalSpeciesCount={allSpecies.length}
           />
 
           {/* Results Grid */}
           <div className="flex-1 space-y-8">
-            {/* Search Input in Results Section */}
+            {/* Search Input */}
             <div className="relative group w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
               <input
@@ -125,7 +140,7 @@ export default function Pokedex() {
                 value={searchQuery}
                 placeholder="Busca por nombre..."
                 onChange={(e) => { setSearchQuery(e.target.value); setOffset(0); }}
-                className="w-full h-14 pl-12 pr-12 rounded-2xl bg-white/5 border border-white/5 focus:border-primary/20 focus:ring-4 focus:ring-primary/5 outline-none transition-all text-lg placeholder:text-muted-foreground/20"
+                className="w-full h-14 pl-12 pr-12 rounded-2xl bg-white/5 border border-white/5 focus:border-primary/20 focus:ring-4 focus:ring-primary/5 outline-none transition-all text-lg placeholder:text-muted-foreground/20 text-white"
               />
               {searchQuery && (
                 <button 
@@ -139,7 +154,7 @@ export default function Pokedex() {
 
             {/* Results */}
             <div className="min-h-[600px]">
-              {isLoadingSource || isLoadingDetails ? (
+              {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-[500px] gap-4">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground animate-pulse">

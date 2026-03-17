@@ -4,7 +4,7 @@ import {
   getPokemonDescription,
   getPokemonTypes,
   getPokemons,
-  getAllPokemons,
+  getAllPokemonSpecies,
   getPokemonsByType,
 } from "@/features/pokemon/services";
 import { PokemonCard, PokemonFilter } from "@/features/pokemon/components";
@@ -43,7 +43,7 @@ export default function Home() {
   // 3. Full List for Discovery Preview
   const { data: discoverySource = [] } = useQuery({
     queryKey: ["pokemon-discovery", selectedType],
-    queryFn: () => selectedType === "all" ? getAllPokemons() : getPokemonsByType(selectedType),
+    queryFn: () => selectedType === "all" ? getAllPokemonSpecies() : getPokemonsByType(selectedType),
     enabled: searchQuery.length > 0 || selectedType !== "all",
   });
 

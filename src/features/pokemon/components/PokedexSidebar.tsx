@@ -1,20 +1,22 @@
 import { getTypeColor } from "@/utils/colors";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getGenerations, getGeneration } from "@/features/pokemon/services";
+import { useMemo } from "react";
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const GENERATIONS = [
-  { id: "all", name: "Todas", offset: 0, limit: 1025, count: 1025 },
-  { id: "gen1", name: "Gen I", offset: 0, limit: 151, count: 151 },
-  { id: "gen2", name: "Gen II", offset: 151, limit: 100, count: 100 },
-  { id: "gen3", name: "Gen III", offset: 251, limit: 135, count: 135 },
-  { id: "gen4", name: "Gen IV", offset: 386, limit: 107, count: 107 },
-  { id: "gen5", name: "Gen V", offset: 493, limit: 156, count: 156 },
-  { id: "gen6", name: "Gen VI", offset: 649, limit: 72, count: 72 },
-  { id: "gen7", name: "Gen VII", offset: 721, limit: 88, count: 88 },
-  { id: "gen8", name: "Gen VIII", offset: 809, limit: 96, count: 96 },
-  { id: "gen9", name: "Gen IX", offset: 905, limit: 120, count: 120 },
-];
+// Helper to convert roman numerals to Gen numbers
+const romanToGen: Record<string, string> = {
+  "generation-i": "Gen I",
+  "generation-ii": "Gen II",
+  "generation-iii": "Gen III",
+  "generation-iv": "Gen IV",
+  "generation-v": "Gen V",
+  "generation-vi": "Gen VI",
+  "generation-vii": "Gen VII",
+  "generation-viii": "Gen VIII",
+  "generation-ix": "Gen IX",
+};
 
 interface Props {
   types: string[];
@@ -22,6 +24,7 @@ interface Props {
   onTypeSelect: (type: string) => void;
   selectedGen: string;
   onGenSelect: (genId: string) => void;
+  totalSpeciesCount: number;
 }
 
 export const PokedexSidebar = ({ 
@@ -29,8 +32,45 @@ export const PokedexSidebar = ({
   selectedType, 
   onTypeSelect, 
   selectedGen, 
-  onGenSelect 
+  onGenSelect,
+  totalSpeciesCount
 }: Props) => {
+  // 1. Fetch all generation summaries
+  const { data: gens = [] } = useQuery({
+    queryKey: ["generations-list"],
+    queryFn: getGenerations,
+  });
+
+  // 2. Fetch all generation details in parallel to get species counts
+  const gensDetailsQueries = useQuery({
+    queryKey: ["generations-details", gens],
+    queryFn: async () => {
+        const results = await Promise.all(
+            gens.map(g => getGeneration(g.name))
+        );
+        return results;
+    },
+    enabled: gens.length > 0
+  });
+
+  const generations = useMemo(() => {
+    const list = [
+        { id: "all", name: "Todas", count: totalSpeciesCount }
+    ];
+
+    if (gensDetailsQueries.data) {
+        gensDetailsQueries.data.forEach(g => {
+            list.push({
+                id: g.name,
+                name: romanToGen[g.name] || g.name,
+                count: g.pokemon_species.length
+            });
+        });
+    }
+
+    return list;
+  }, [gensDetailsQueries.data, totalSpeciesCount]);
+
   return (
     <aside className="w-full lg:w-72 flex flex-col gap-10">
       {/* Generations Section */}
@@ -39,24 +79,30 @@ export const PokedexSidebar = ({
           Generaciones
         </h3>
         <div className="flex flex-col gap-1">
-          {GENERATIONS.map((gen) => (
-            <button
-              key={gen.id}
-              onClick={() => onGenSelect(gen.id)}
-              className={cn(
-                "group flex items-center justify-between px-4 py-3 rounded-xl transition-all border",
-                selectedGen === gen.id 
-                  ? "bg-primary/10 border-primary/30 text-white gold-glow" 
-                  : "bg-white/5 border-transparent text-muted-foreground hover:bg-white/10 hover:text-white"
-              )}
-            >
-              <span className="text-sm font-bold">{gen.name}</span>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black opacity-40">{gen.count}</span>
-                {selectedGen === gen.id && <Check className="size-4 text-primary" />}
-              </div>
-            </button>
-          ))}
+          {gensDetailsQueries.isLoading ? (
+            Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} className="h-12 w-full glass animate-pulse rounded-xl" />
+            ))
+          ) : (
+            generations.map((gen) => (
+                <button
+                  key={gen.id}
+                  onClick={() => onGenSelect(gen.id)}
+                  className={cn(
+                    "group flex items-center justify-between px-4 py-3 rounded-xl transition-all border",
+                    selectedGen === gen.id 
+                      ? "bg-primary/10 border-primary/30 text-white gold-glow" 
+                      : "bg-white/5 border-transparent text-muted-foreground hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  <span className="text-sm font-bold">{gen.name}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black opacity-40">{gen.count}</span>
+                    {selectedGen === gen.id && <Check className="size-4 text-primary" />}
+                  </div>
+                </button>
+              ))
+          )}
         </div>
       </div>
 

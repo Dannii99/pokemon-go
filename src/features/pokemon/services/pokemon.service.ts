@@ -46,10 +46,11 @@ export const getTypeData = async (type: string) => {
 /**
  * Recibe la lista básica y trae los detalles completos
  */
-export const getDetailedPokemons = async (list: { name: string; url: string }[]): Promise<Pokemon[]> => {
+export const getDetailedPokemons = async (list: (string | { name: string; url?: string })[]): Promise<Pokemon[]> => {
   const detailedPokemons = await Promise.all(
-    list.map(async (p) => {
-      const detail = await api.get(p.url);
+    list.map(async (item) => {
+      const identifier = typeof item === 'string' ? item : item.name;
+      const detail = await api.get(`pokemon/${identifier}`);
       return {
         id: detail.data.id,
         name: detail.data.name,
@@ -75,10 +76,26 @@ export const getPokemonDescription = async (name: string) => {
 
 
 /**
- * Obtiene todos los Pokémon (nombres y URLs) para búsqueda local
+ * Obtiene todas las especies de Pokémon
  */
-export const getAllPokemons = async () => {
-  const response = await api.get(`pokemon?limit=2000`);
+export const getAllPokemonSpecies = async () => {
+  const response = await api.get(`pokemon-species?limit=2000`);
+  return response.data.results as { name: string; url: string }[];
+};
+
+/**
+ * Obtiene los detalles de una generación específica
+ */
+export const getGeneration = async (id: string | number) => {
+  const response = await api.get(`generation/${id}`);
+  return response.data;
+};
+
+/**
+ * Obtiene todas las generaciones disponibles
+ */
+export const getGenerations = async () => {
+  const response = await api.get(`generation`);
   return response.data.results as { name: string; url: string }[];
 };
 
