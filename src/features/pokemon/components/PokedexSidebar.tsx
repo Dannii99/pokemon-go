@@ -1,0 +1,147 @@
+import { getTypeColor } from "@/utils/colors";
+import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getGenerations, getGeneration } from "@/features/pokemon/services";
+import { useMemo } from "react";
+
+// Helper to convert roman numerals to Gen numbers
+const romanToGen: Record<string, string> = {
+  "generation-i": "Gen I",
+  "generation-ii": "Gen II",
+  "generation-iii": "Gen III",
+  "generation-iv": "Gen IV",
+  "generation-v": "Gen V",
+  "generation-vi": "Gen VI",
+  "generation-vii": "Gen VII",
+  "generation-viii": "Gen VIII",
+  "generation-ix": "Gen IX",
+};
+
+interface Props {
+  types: string[];
+  selectedType: string;
+  onTypeSelect: (type: string) => void;
+  selectedGen: string;
+  onGenSelect: (genId: string) => void;
+  totalSpeciesCount: number;
+}
+
+export const PokedexSidebar = ({ 
+  types, 
+  selectedType, 
+  onTypeSelect, 
+  selectedGen, 
+  onGenSelect,
+  totalSpeciesCount
+}: Props) => {
+  // 1. Fetch all generation summaries
+  const { data: gens = [] } = useQuery({
+    queryKey: ["generations-list"],
+    queryFn: getGenerations,
+  });
+
+  // 2. Fetch all generation details in parallel to get species counts
+  const gensDetailsQueries = useQuery({
+    queryKey: ["generations-details", gens],
+    queryFn: async () => {
+        const results = await Promise.all(
+            gens.map(g => getGeneration(g.name))
+        );
+        return results;
+    },
+    enabled: gens.length > 0
+  });
+
+  const generations = useMemo(() => {
+    const list = [
+        { id: "all", name: "Todas", count: totalSpeciesCount }
+    ];
+
+    if (gensDetailsQueries.data) {
+        gensDetailsQueries.data.forEach(g => {
+            list.push({
+                id: g.name,
+                name: romanToGen[g.name] || g.name,
+                count: g.pokemon_species.length
+            });
+        });
+    }
+
+    return list;
+  }, [gensDetailsQueries.data, totalSpeciesCount]);
+
+  return (
+    <aside className="w-full lg:w-72 flex flex-col gap-10">
+      {/* Generations Section */}
+      <div className="space-y-6">
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          Generaciones
+        </h3>
+        <div className="flex flex-col gap-1">
+          {gensDetailsQueries.isLoading ? (
+            Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} className="h-12 w-full glass animate-pulse rounded-xl" />
+            ))
+          ) : (
+            generations.map((gen) => (
+                <button
+                  key={gen.id}
+                  onClick={() => onGenSelect(gen.id)}
+                  className={cn(
+                    "group flex items-center justify-between px-4 py-3 rounded-xl transition-all border",
+                    selectedGen === gen.id 
+                      ? "bg-primary/10 border-primary/30 text-white gold-glow" 
+                      : "bg-white/5 border-transparent text-muted-foreground hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  <span className="text-sm font-bold">{gen.name}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-black opacity-40">{gen.count}</span>
+                    {selectedGen === gen.id && <Check className="size-4 text-primary" />}
+                  </div>
+                </button>
+              ))
+          )}
+        </div>
+      </div>
+
+      {/* Types Section */}
+      <div className="space-y-6">
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          Tipos
+        </h3>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => onTypeSelect("all")}
+            className={cn(
+              "px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border text-center",
+              selectedType === "all" 
+                ? "bg-primary text-background border-primary gold-glow" 
+                : "glass-dark hover:bg-white/10 text-muted-foreground border-white/10"
+            )}
+          >
+            Todos
+          </button>
+          {types.map((type) => (
+            <button
+              key={type}
+              onClick={() => onTypeSelect(type)}
+              className={cn(
+                "px-3 py-2.5 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest border text-center relative overflow-hidden group/chip",
+                selectedType === type 
+                  ? "text-white border-white/40 gold-glow" 
+                  : "text-muted-foreground border-white/5 hover:border-white/20"
+              )}
+              style={{ 
+                backgroundColor: selectedType === type ? getTypeColor(type) : `${getTypeColor(type)}15` 
+              }}
+            >
+              <span className="relative z-10">{type}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </aside>
+  );
+};

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f7cf2b",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#181711",
+                        "accent-neon": "#00f2ff",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(58, 54, 39, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(247, 207, 43, 0.1);
+        }
+        .neon-glow:hover {
+            box-shadow: 0 0 15px rgba(247, 207, 43, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 selection:bg-primary/30">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 w-full glass-panel border-b border-primary/10 px-6 md:px-10 py-3">
+<div class="max-w-7xl mx-auto flex items-center justify-between gap-8">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">capture</span>
+<h2 class="text-slate-100 text-xl font-bold leading-tight tracking-tight">PokéPremium</h2>
+</div>
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-slate-300 hover:text-primary transition-colors text-sm font-medium" href="#">Pokédex</a>
+<a class="text-slate-300 hover:text-primary transition-colors text-sm font-medium" href="#">Legendaries</a>
+<a class="text-slate-300 hover:text-primary transition-colors text-sm font-medium" href="#">Battle Hub</a>
+<a class="text-slate-300 hover:text-primary transition-colors text-sm font-medium" href="#">Items</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end items-center gap-4">
+<div class="hidden md:flex flex-1 max-w-md">
+<label class="relative w-full">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+<span class="material-symbols-outlined text-xl">search</span>
+</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-xl bg-background-dark/50 border border-primary/20 text-slate-100 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-slate-500 text-sm" placeholder="Search Pokémon..." type="text"/>
+</label>
+</div>
+<button class="flex items-center justify-center rounded-xl h-10 px-6 bg-primary text-background-dark text-sm font-bold neon-glow transition-all active:scale-95">
+                        Login
+                    </button>
+<div class="size-10 rounded-full border-2 border-primary/20 bg-cover bg-center" data-alt="User profile avatar with pokemon theme" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCLq9E2r8aIyBEkFvsGI6iz_BEz4OQvGLKEhxuLn_0CcgGVCeQ4e6_jDBzZWBhaYfYPJO166-Ze8tzf2GLNK88YHBjwqh6C4aCXdtKRcZMRrD6fIKhavsgjynsFRfJyeSf6qgfAVPioGMta7HFrv2AwvT2UGYugVjDCP86O-PaFnujFYbNyr2ADjb7Z1j3AgotticH4pyTcYJ34_pPcGVuiPysqtWoU3exM_woshvjFB3N89rdC8BQMCLygHAj7UVj9YBBSdP0ZeXY')"></div>
+</div>
+</div>
+</header>
+<main class="flex-1 w-full max-w-7xl mx-auto px-6 md:px-10 py-8">
+<!-- Hero Section -->
+<section class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-background-dark to-background-dark border border-primary/5 p-8 md:p-12 mb-12">
+<div class="absolute -top-24 -right-24 size-96 bg-primary/10 rounded-full blur-[100px]"></div>
+<div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="space-y-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                            Featured Edition
+                        </div>
+<h1 class="text-slate-100 text-5xl md:text-7xl font-black leading-[1.1] tracking-tight">
+                            Master the <span class="text-primary">Ultimate</span> Pokédex
+                        </h1>
+<p class="text-slate-400 text-lg max-w-lg">
+                            Experience the world of Pokémon with premium data, real-time battle stats, and neon-infused gaming analytics.
+                        </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="px-8 py-4 rounded-xl bg-primary text-background-dark font-bold text-lg hover:shadow-[0_0_20px_rgba(247,207,43,0.5)] transition-all flex items-center gap-2">
+                                Explore Pokédex
+                                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="px-8 py-4 rounded-xl glass-panel text-slate-100 font-bold text-lg border border-primary/20 hover:bg-primary/10 transition-all">
+                                View Rankings
+                            </button>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute inset-0 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-all duration-500"></div>
+<img alt="Pikachu" class="relative z-10 w-full h-auto drop-shadow-[0_0_30px_rgba(247,207,43,0.3)] transform hover:scale-105 transition-transform duration-500" data-alt="Official artwork of Pikachu in high definition" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwRe17_wUMTotzZ5Nf0MOpqeNAcrkRSY0SnACcv4Y9MB9ohf6Di9xE70DGTPqQ01izZZilCafpPjPi-6xGYUIYWcxnVaFOy4X-_IgjCjsQVQbslwVZ7a54wKMCSSOhIjJFm0naffRlgd9HuR3KbjAyBZ0thrsrzbfijgEyZRm7yQLFfS5Yf6PbsgH6Vrw66tNpi41LfjrlKgxKUL58efqUftp6I-EBoV2yEXOQjgGT0NUAB_SHc7S24mNJMPDt2AaFl9DF6QwkTp8"/>
+</div>
+</div>
+</section>
+<!-- Quick Filters -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-slate-100 text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">filter_list</span>
+                        Quick Filters
+                    </h3>
+</div>
+<div class="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+<button class="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined">bolt</span>
+<span class="font-semibold">Electric</span>
+</button>
+<button class="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined">local_fire_department</span>
+<span class="font-semibold">Fire</span>
+</button>
+<button class="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-500 hover:bg-blue-500/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined">water_drop</span>
+<span class="font-semibold">Water</span>
+</button>
+<button class="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-green-500/10 border border-green-500/30 text-green-500 hover:bg-green-500/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined">eco</span>
+<span class="font-semibold">Grass</span>
+</button>
+<button class="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-500 hover:bg-purple-500/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-semibold">Psychic</span>
+</button>
+<button class="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-500 hover:bg-orange-500/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-semibold">Fighting</span>
+</button>
+<button class="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-slate-500/10 border border-slate-500/30 text-slate-400 hover:bg-slate-500/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined">more_horiz</span>
+<span class="font-semibold">All Types</span>
+</button>
+</div>
+</section>
+<!-- Trending Carousel -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-slate-100 text-2xl font-bold">Trending Pokémon</h3>
+<p class="text-slate-500 text-sm mt-1">Based on global battle usage and community interest</p>
+</div>
+<div class="flex gap-2">
+<button class="size-10 rounded-lg glass-panel flex items-center justify-center text-slate-300 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-10 rounded-lg glass-panel flex items-center justify-center text-slate-300 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<!-- Charizard Card -->
+<div class="group relative glass-panel rounded-xl p-6 border border-white/5 hover:border-primary/50 transition-all duration-300">
+<div class="absolute top-4 right-4 text-slate-600 font-mono font-bold group-hover:text-primary transition-colors">#0006</div>
+<div class="flex justify-center mb-4">
+<img class="size-32 object-contain group-hover:scale-110 transition-transform duration-300" data-alt="Realistic Charizard game sprite" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiSYQBiIQ542cWc4IssF20cqMIcd9K93BMN2GwLJVzlehRMDY7naKU02l5toENXEY1uIxbHPtM63IRfCDX5UodNYX7bgGnEdpdyZVGA0TJClgeDCoSZPEVny-mVS_MFo4gIFIu1mMUjgnQ33EkAbnmt05m-a38ghVEd9p4dC733S7SxpPM4Ou_0q-MEVocg8FxxR82B9r23fbys2bwdmiLLIRYwvx4Xy5d2K-JwZkd5pheOKAsA3evl3z6uoUOllMA3w5BQLFe_uo"/>
+</div>
+<h4 class="text-slate-100 text-xl font-bold text-center">Charizard</h4>
+<div class="flex justify-center gap-2 mt-3">
+<span class="px-3 py-1 rounded bg-red-500/20 text-red-400 text-xs font-bold uppercase tracking-wider">Fire</span>
+<span class="px-3 py-1 rounded bg-slate-400/20 text-slate-300 text-xs font-bold uppercase tracking-wider">Flying</span>
+</div>
+</div>
+<!-- Mewtwo Card -->
+<div class="group relative glass-panel rounded-xl p-6 border border-white/5 hover:border-primary/50 transition-all duration-300">
+<div class="absolute top-4 right-4 text-slate-600 font-mono font-bold group-hover:text-primary transition-colors">#0150</div>
+<div class="flex justify-center mb-4">
+<img class="size-32 object-contain group-hover:scale-110 transition-transform duration-300" data-alt="Mewtwo legendary pokemon sprite" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwKi_gPkbb5J8cRsyXlO0zNHEppsaD19AmCjN_pzGqxx05Q5d6M-1ZpMuEF2QRJnLnk-cZKpYgl6PaY5h5wHbQyxGFYGU8KwzpsZpz8kt_Z6yzwsSMFTdNZi3KT6YA4-iA-NwuF52cu7qff2RaPt6we1rvN2dqEpozWtMyeK-mpxdtR-Jqm67emJcler8-LN7PdtNPo75IUUohuaOTMox0owlFWkucSEPb6PSwNhNmW02iS7sK_V_yKRj0TFQaGocPkGE_fg2askk"/>
+</div>
+<h4 class="text-slate-100 text-xl font-bold text-center">Mewtwo</h4>
+<div class="flex justify-center gap-2 mt-3">
+<span class="px-3 py-1 rounded bg-purple-500/20 text-purple-400 text-xs font-bold uppercase tracking-wider">Psychic</span>
+</div>
+</div>
+<!-- Lucario Card -->
+<div class="group relative glass-panel rounded-xl p-6 border border-white/5 hover:border-primary/50 transition-all duration-300">
+<div class="absolute top-4 right-4 text-slate-600 font-mono font-bold group-hover:text-primary transition-colors">#0448</div>
+<div class="flex justify-center mb-4">
+<img class="size-32 object-contain group-hover:scale-110 transition-transform duration-300" data-alt="Lucario pokemon sprite" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzGEzFfGCASEYAHVLTBx0WLlmc7vrdhLKfFacsQAlT14Q894jSjf4GiM48tszHSUt4jR-E6V-yAu2g_UIXsKBc9_ZGwZL45GykaIFILlZ0w3PGaqLTEVQFdTD0RM9yNImYY8a5rq6VLGB3PHdP8dfMnxcje82-H8qMqOgX7BO-P8dvD0T702KCJn2OK-CpYdSDI6_ut9CPa6MODlxt-AF8HcMR3xuo6fxO_26M95D_ZcKxRHKe0CUH4S7YFRlJvHheZkxy_u26g60"/>
+</div>
+<h4 class="text-slate-100 text-xl font-bold text-center">Lucario</h4>
+<div class="flex justify-center gap-2 mt-3">
+<span class="px-3 py-1 rounded bg-blue-600/20 text-blue-400 text-xs font-bold uppercase tracking-wider">Fighting</span>
+<span class="px-3 py-1 rounded bg-slate-500/20 text-slate-300 text-xs font-bold uppercase tracking-wider">Steel</span>
+</div>
+</div>
+<!-- Gengar Card -->
+<div class="group relative glass-panel rounded-xl p-6 border border-white/5 hover:border-primary/50 transition-all duration-300">
+<div class="absolute top-4 right-4 text-slate-600 font-mono font-bold group-hover:text-primary transition-colors">#0094</div>
+<div class="flex justify-center mb-4">
+<img class="size-32 object-contain group-hover:scale-110 transition-transform duration-300" data-alt="Gengar pokemon sprite" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl64ftdpT7LTZsjRnOpaOHWcgnzsTVDHQzyGRrwoNT-Prtgaa48hAXFizh2-ijWs-VLhuGhiJyV1fGgoYpqlwpFTMp4rgh-v6OL4VzTKPKSQdbVcX3lOkpRNlMlI1KBj6A6Dlbx0PO5TpGwPdzaLMqYCksYSlqQcV9Oz7U_Lpjd__o_t0Q7Ce_Vmjh2XATSROnudiwEcIZsgygLMtf8hAImACyKNq0XXokbAhasTxY0ejkR-_ByQ8TaQOImgwqTDPvYezdoGaCSHc"/>
+</div>
+<h4 class="text-slate-100 text-xl font-bold text-center">Gengar</h4>
+<div class="flex justify-center gap-2 mt-3">
+<span class="px-3 py-1 rounded bg-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider">Ghost</span>
+<span class="px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider">Poison</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Secondary Features -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+<div class="p-8 rounded-xl bg-gradient-to-br from-background-dark to-slate-900 border border-primary/10 flex items-center gap-6 group">
+<div class="size-16 rounded-xl bg-primary/20 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background-dark transition-all">
+<span class="material-symbols-outlined text-4xl">swords</span>
+</div>
+<div>
+<h4 class="text-slate-100 text-xl font-bold">Battle Simulator</h4>
+<p class="text-slate-400 mt-1">Test your team strategies against top global players.</p>
+</div>
+</div>
+<div class="p-8 rounded-xl bg-gradient-to-br from-background-dark to-slate-900 border border-primary/10 flex items-center gap-6 group">
+<div class="size-16 rounded-xl bg-accent-neon/20 flex items-center justify-center text-accent-neon group-hover:bg-accent-neon group-hover:text-background-dark transition-all">
+<span class="material-symbols-outlined text-4xl">monitoring</span>
+</div>
+<div>
+<h4 class="text-slate-100 text-xl font-bold">Advanced Analytics</h4>
+<p class="text-slate-400 mt-1">Deep dive into IVs, EVs, and competitive tier lists.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full glass-panel border-t border-primary/10 py-12 px-6">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3 text-primary opacity-80">
+<span class="material-symbols-outlined text-2xl">capture</span>
+<span class="font-bold">PokéPremium</span>
+</div>
+<div class="flex gap-8 text-slate-400 text-sm">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">API Docs</a>
+<a class="hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<div class="flex gap-4">
+<button class="size-8 rounded flex items-center justify-center bg-slate-800 text-slate-300 hover:text-primary transition-colors">
+<svg class="size-5" fill="currentColor" viewbox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
+</button>
+<button class="size-8 rounded flex items-center justify-center bg-slate-800 text-slate-300 hover:text-primary transition-colors">
+<svg class="size-5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.841 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path></svg>
+</button>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-8 pt-8 border-t border-white/5 text-center text-slate-500 text-xs">
+                © 2024 PokéPremium Analytics. Pokémon is a trademark of Nintendo. This project is for demonstration purposes.
+            </div>
+</footer>
+</div>
+</body></html>
