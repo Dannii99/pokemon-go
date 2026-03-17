@@ -5,6 +5,7 @@ import {
   getPokemonTypes,
   getPokemons,
   getAllPokemons,
+  getPokemonsByType,
 } from "@/features/pokemon/services";
 import { PokemonCard, PokemonFilter } from "@/features/pokemon/components";
 import type { PokemonDetail } from "@/features/pokemon/types";
@@ -18,6 +19,7 @@ import { cn } from "@/lib/utils";
 export default function Home() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("all");
 
   // 1. Banner (Charizard)
   const { data: pokemonBanner } = useQuery({
@@ -38,41 +40,51 @@ export default function Home() {
   });
   const types = useMemo(() => rawTypes.map((t: { name: string }) => t.name), [rawTypes]);
 
-  // 3. Full List for Search Preview
-  const { data: allPokemonList = [] } = useQuery({
-    queryKey: ["pokemon-all-names"],
-    queryFn: getAllPokemons,
-    enabled: searchQuery.length > 0,
+  // 3. Full List for Discovery Preview
+  const { data: discoverySource = [] } = useQuery({
+    queryKey: ["pokemon-discovery", selectedType],
+    queryFn: () => selectedType === "all" ? getAllPokemons() : getPokemonsByType(selectedType),
+    enabled: searchQuery.length > 0 || selectedType !== "all",
   });
 
-  // 4. Preview Selection
-  const previewList = useMemo(() => {
-    if (searchQuery.length > 0) {
-      const normalized = searchQuery.toLowerCase();
-      return allPokemonList
-        .filter(p => p.name.toLowerCase().includes(normalized))
-        .slice(0, 4); // Limit to 4 for search preview
-    }
-    return null; // Fallback to standard preview
-  }, [allPokemonList, searchQuery]);
-
-  // 5. Standard Preview (First 6)
+  // 4. Standard Preview (First 6)
   const { data: standardPreviewSource = [] } = useQuery({
     queryKey: ["pokemon-standard-preview"],
     queryFn: () => getPokemons(6, 0),
-    enabled: searchQuery.length === 0,
+    enabled: searchQuery.length === 0 && selectedType === "all",
   });
 
+  // 5. Compute Active Preview List
   const activeSource = useMemo(() => {
-    if (searchQuery.length > 0) return previewList || [];
+    const isSearching = searchQuery.length > 0;
+    const isFiltering = selectedType !== "all";
+
+    if (isSearching || isFiltering) {
+      let list = discoverySource;
+      if (isSearching) {
+        const normalized = searchQuery.toLowerCase();
+        list = list.filter(p => p.name.toLowerCase().includes(normalized));
+      }
+      return list.slice(0, 4); // Limit to 4 for discovery preview
+    }
+
     return standardPreviewSource.results || [];
-  }, [searchQuery, previewList, standardPreviewSource]);
+  }, [discoverySource, standardPreviewSource, searchQuery, selectedType]);
 
   const { data: displayPokemons = [], isLoading: isLoadingPreview } = useQuery({
     queryKey: ["pokemon-home-display", activeSource],
     queryFn: () => getDetailedPokemons(activeSource),
     enabled: activeSource.length > 0,
   });
+
+  const handleVerTodos = () => {
+    navigate("/pokedex", { 
+      state: { 
+        search: searchQuery, 
+        type: selectedType 
+      } 
+    });
+  };
 
   if (!pokemonBanner) {
     return (
@@ -83,6 +95,8 @@ export default function Home() {
       </div>
     );
   }
+
+  const isDiscoveryMode = searchQuery.length > 0 || selectedType !== "all";
 
   return (
     <main className="min-h-screen bg-background text-foreground flex flex-col">
@@ -113,14 +127,14 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="text-xl md:text-2xl text-muted-foreground/80 leading-tight max-w-xl mx-auto lg:mx-0 font-medium">
+            <p className="text-xl md:text-[1.375rem] text-muted-foreground/80 leading-tight max-w-xl mx-auto lg:mx-0 font-medium">
               Domina el campo de batalla con el poder legendario de {pokemonBanner.name}. Un icono de fuerza y fuego puro.
             </p>
 
             <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-2">
               <Button 
                 size="lg" 
-                onClick={() => navigate("/pokedex")}
+                onClick={() => navigate(`/pokemon/${pokemonBanner.id}`)}
                 className="h-16 px-10 text-xl font-black uppercase tracking-tighter hover:scale-105 transition-all group bg-primary text-background hover:gold-glow"
               >
                 Explorar Pokémon <Zap className="ml-3 size-6 fill-current group-hover:animate-pulse" />
@@ -146,48 +160,55 @@ export default function Home() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2">
                     <h2 className="text-3xl font-black uppercase tracking-tighter text-white">
-                        {searchQuery ? "Resultados de búsqueda" : "Vista Previa Pokédex"}
+                        {isDiscoveryMode ? "Resultados sugeridos" : "Vista Previa Pokédex"}
                     </h2>
                     <p className="text-muted-foreground font-medium">
-                        {searchQuery 
-                          ? `Mostrando los primeros resultados para "${searchQuery}"` 
+                        {isDiscoveryMode 
+                          ? `Explorando ${selectedType !== 'all' ? `tipo ${selectedType}` : ''} ${searchQuery ? `"${searchQuery}"` : ''}` 
                           : "Descubre los ejemplares más recientes y destacados."}
                     </p>
                 </div>
                 <Button 
                     variant="link" 
-                    onClick={() => navigate("/pokedex")}
+                    onClick={handleVerTodos}
                     className={cn(
                         "font-black uppercase tracking-widest flex items-center gap-2 hover:no-underline transition-all",
-                        searchQuery 
+                        isDiscoveryMode 
                           ? "bg-primary/20 text-primary px-6 py-3 rounded-2xl border border-primary/20 hover:bg-primary/30 scale-110 gold-glow" 
                           : "text-primary hover:opacity-80"
                     )}
                 >
-                    Ver todos {searchQuery && "los resultados"} <ArrowRight className="size-5" />
+                    Ver todos {isDiscoveryMode && "los resultados"} <ArrowRight className="size-5" />
                 </Button>
             </div>
 
+            <button 
+              className={cn("text-[10px] font-black uppercase tracking-widest text-primary/40 hover:text-primary transition-colors", !isDiscoveryMode && "hidden")}
+              onClick={() => { setSearchQuery(""); setSelectedType("all"); }}
+            >
+              Limpiar filtros
+            </button>
+
             <PokemonFilter
                 types={types}
-                selectedType="all"
+                selectedType={selectedType}
                 isHome={true}
-                onFilter={(type) => navigate("/pokedex", { state: { type } })}
+                onFilter={(type) => setSelectedType(type)}
                 onSearch={(q) => setSearchQuery(q)}
             />
             
             <div className={cn(
-                "grid gap-x-10 gap-y-24 mt-12",
-                searchQuery ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+                "grid gap-x-10 gap-y-24 mt-24",
+                isDiscoveryMode ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
             )}>
                 {isLoadingPreview ? (
-                    Array.from({ length: searchQuery ? 4 : 6 }).map((_, i) => (
+                    Array.from({ length: isDiscoveryMode ? 4 : 6 }).map((_, i) => (
                         <div key={i} className="h-64 rounded-3xl glass animate-pulse" />
                     ))
-                ) : displayPokemons.length === 0 && searchQuery ? (
+                ) : displayPokemons.length === 0 && isDiscoveryMode ? (
                     <div className="col-span-full py-20 text-center space-y-4">
                         <p className="text-xl font-bold text-muted-foreground uppercase tracking-widest">No se encontraron coincidencias para la vista previa</p>
-                        <Button variant="outline" onClick={() => navigate("/pokedex")}>Ir a búsqueda completa</Button>
+                        <Button variant="outline" onClick={handleVerTodos}>Ir a búsqueda completa</Button>
                     </div>
                 ) : (
                     displayPokemons.map((p, index) => (

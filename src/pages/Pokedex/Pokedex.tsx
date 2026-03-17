@@ -11,11 +11,15 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { GENERATIONS } from "@/features/pokemon/components/PokedexSidebar";
+import { useLocation } from "react-router-dom";
 
 export default function Pokedex() {
-  const [selectedType, setSelectedType] = useState("all");
+  const location = useLocation();
+  const initialState = location.state as { search?: string; type?: string } | null;
+
+  const [selectedType, setSelectedType] = useState(initialState?.type || "all");
   const [selectedGen, setSelectedGen] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialState?.search || "");
   const [offset, setOffset] = useState(0);
   const limit = 20;
 
