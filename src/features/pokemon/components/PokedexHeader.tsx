@@ -19,8 +19,8 @@ export const PokedexHeader = ({ totalCount }: Props) => {
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Volver al Inicio</span>
         </Link>
         <div className="flex items-baseline gap-4">
-          <h1 className="text-5xl font-black uppercase tracking-tighter text-white">Pokédex</h1>
-          <span className="text-primary font-black uppercase tracking-widest text-xs bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter text-white">Pokédex</h1>
+          <span className="text-primary font-black uppercase tracking-widest text-[0.625rem] mdtext-xs bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
             {totalCount} Pokémon
           </span>
         </div>

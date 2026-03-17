@@ -72,7 +72,7 @@ export const PokedexSidebar = ({
   }, [gensDetailsQueries.data, totalSpeciesCount]);
 
   return (
-    <aside className="w-full lg:w-72 flex flex-col gap-10">
+    <aside className="w-full md:w-72 flex flex-col gap-10">
       {/* Generations Section */}
       <div className="space-y-6">
         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">

@@ -85,12 +85,10 @@ export default function Home() {
   });
 
   const handleVerTodos = () => {
-    navigate("/pokedex", { 
-      state: { 
-        search: searchQuery, 
-        type: selectedType 
-      } 
-    });
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("search", searchQuery);
+    if (selectedType !== "all") params.set("type", selectedType);
+    navigate(`/pokedex?${params.toString()}`);
   };
 
   if (!pokemonBanner) {
@@ -119,7 +117,7 @@ export default function Home() {
             </div>
             
             <div className="space-y-4">
-              <h1 className="text-7xl md:text-9xl font-black uppercase tracking-tighter text-white leading-[0.8] drop-shadow-2xl">
+              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black uppercase tracking-tighter text-white leading-[0.8] drop-shadow-2xl">
                 {pokemonBanner.name}
               </h1>
               <div className="flex flex-wrap justify-center lg:justify-start gap-3">
@@ -134,7 +132,7 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="text-xl md:text-[1.375rem] text-muted-foreground/80 leading-tight max-w-xl mx-auto lg:mx-0 font-medium">
+            <p className="text-md md:text-xl lg:text-[22px] text-muted-foreground/80 leading-tight max-w-xl mx-auto lg:mx-0 font-medium">
               Domina el campo de batalla con el poder legendario de {pokemonBanner.name}. Un icono de fuerza y fuego puro.
             </p>
 
@@ -142,7 +140,7 @@ export default function Home() {
               <Button 
                 size="lg" 
                 onClick={() => navigate(`/pokemon/${pokemonBanner.id}`)}
-                className="h-16 px-10 text-xl font-black uppercase tracking-tighter hover:scale-105 transition-all group bg-primary text-background hover:gold-glow"
+                className="h-16 px-10 text-md md:text-lg lg:text-xl font-black uppercase tracking-tighter hover:scale-105 transition-all group bg-primary text-background hover:gold-glow"
               >
                 Explorar Pokémon <Zap className="ml-3 size-6 fill-current group-hover:animate-pulse" />
               </Button>
