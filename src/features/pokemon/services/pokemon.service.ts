@@ -12,10 +12,34 @@ export const getPokemons = async (limit = 20, offset = 0) => {
 };
 
 /**
- * Obtiene un Pokémon
+ * Obtiene los detalles completos de un Pokémon por ID o nombre
  */
-export const getPokemonByName = async (name: string) => {
-  const response = await api.get(`pokemon/${name}`);
+export const getPokemonById = async (id: string | number) => {
+  const response = await api.get(`pokemon/${id}`);
+  return response.data;
+};
+
+/**
+ * Obtiene la información de especie de un Pokémon
+ */
+export const getPokemonSpecies = async (id: string | number) => {
+  const response = await api.get(`pokemon-species/${id}`);
+  return response.data;
+};
+
+/**
+ * Obtiene la cadena de evolución desde una URL completa
+ */
+export const getEvolutionChain = async (url: string) => {
+  const response = await api.get(url);
+  return response.data;
+};
+
+/**
+ * Obtiene los detalles de un tipo para calcular efectividades
+ */
+export const getTypeData = async (type: string) => {
+  const response = await api.get(`type/${type}`);
   return response.data;
 };
 

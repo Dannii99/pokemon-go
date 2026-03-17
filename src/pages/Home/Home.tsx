@@ -1,6 +1,6 @@
 import {
   getDetailedPokemons,
-  getPokemonByName,
+  getPokemonById,
   getPokemonDescription,
   getPokemonTypes,
   getPokemons,
@@ -24,7 +24,7 @@ export default function Home() {
     queryKey: ["pokemon-banner", "charizard"],
     queryFn: async () => {
       const [data, description] = await Promise.all([
-        getPokemonByName("charizard"),
+        getPokemonById("charizard"),
         getPokemonDescription("charizard"),
       ]);
       return { ...data, description } as PokemonDetail;

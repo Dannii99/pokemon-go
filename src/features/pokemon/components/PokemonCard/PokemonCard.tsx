@@ -1,17 +1,20 @@
 import type { Pokemon } from "@/features/pokemon/types";
 import { getTypeColor } from "@/utils/colors";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   pokemon: Pokemon;
 }
 
 export const PokemonCard = ({ pokemon }: Props) => {
+  const navigate = useNavigate();
   const primaryTypeColor = getTypeColor(pokemon.types[0]);
 
   return (
     <div 
-      className="group relative flex flex-col items-center rounded-xl glass-dark p-5 pt-16 transition-all duration-300 hover:-translate-y-2 hover:gold-glow min-h-[18.75rem]"
+      onClick={() => navigate(`/pokemon/${pokemon.id}`)}
+      className="group relative flex flex-col items-center rounded-xl glass-dark p-5 pt-16 transition-all duration-300 hover:-translate-y-2 hover:gold-glow min-h-[18.75rem] cursor-pointer"
       style={{
         background: `linear-gradient(180deg, rgba(26, 24, 16, 0.8) 0%, ${primaryTypeColor}22 100%)`
       }}
@@ -59,7 +62,11 @@ export const PokemonCard = ({ pokemon }: Props) => {
         <div className="mt-6">
           <Button 
             variant="default" 
-            size="default"
+            size="sm"
+            onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/pokemon/${pokemon.id}`);
+            }}
             className="w-full font-bold uppercase tracking-tighter hover:scale-105 transition-transform"
           >
             Detalles ⚡

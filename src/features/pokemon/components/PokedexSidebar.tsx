@@ -2,6 +2,7 @@ import { getTypeColor } from "@/utils/colors";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const GENERATIONS = [
   { id: "all", name: "Todas", offset: 0, limit: 1025, count: 1025 },
   { id: "gen1", name: "Gen I", offset: 0, limit: 151, count: 151 },
