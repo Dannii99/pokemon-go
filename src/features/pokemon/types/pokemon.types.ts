@@ -28,6 +28,7 @@ export interface PokemonSprites {
 }
 
 export interface PokemonDetail {
+  id: number;
   name: string;
   types: PokemonType[];
   sprites: PokemonSprites;

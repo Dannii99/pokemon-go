@@ -16,6 +16,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
+
+
 export default function Home() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,11 +50,16 @@ export default function Home() {
   });
 
   // 4. Standard Preview (First 6)
-  const { data: standardPreviewSource = [] } = useQuery({
+  /* const { data: standardPreviewSource = [] } = useQuery({
     queryKey: ["pokemon-standard-preview"],
     queryFn: () => getPokemons(6, 0),
     enabled: searchQuery.length === 0 && selectedType === "all",
-  });
+  }); */
+  const { data: standardPreviewSource } = useQuery({
+  queryKey: ["pokemon-standard-preview"],
+  queryFn: () => getPokemons(6, 0),
+  enabled: searchQuery.length === 0 && selectedType === "all",
+});
 
   // 5. Compute Active Preview List
   const activeSource = useMemo(() => {
@@ -68,7 +75,7 @@ export default function Home() {
       return list.slice(0, 4); // Limit to 4 for discovery preview
     }
 
-    return standardPreviewSource.results || [];
+    return standardPreviewSource?.results ?? [];
   }, [discoverySource, standardPreviewSource, searchQuery, selectedType]);
 
   const { data: displayPokemons = [], isLoading: isLoadingPreview } = useQuery({
