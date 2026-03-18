@@ -32,14 +32,14 @@ export default function Pokedex() {
   }, [page]);
 
   // 1. Fetch Types
-  const { data: rawTypes = [], isError: isErrorTypes } = useQuery({
+  const { data: rawTypes = [], isError: isErrorTypes, isLoading: isLoadingTypes } = useQuery({
     queryKey: ["pokemon-types"],
     queryFn: getPokemonTypes,
   });
   const types = useMemo(() => rawTypes.map((t: { name: string }) => t.name), [rawTypes]);
 
   // 2. Fetch Full Species List (Source of truth for "Todas")
-  const { data: allSpecies = [], isError: isErrorSpecies } = useQuery({
+  const { data: allSpecies = [], isError: isErrorSpecies, isLoading: isLoadingSpecies } = useQuery({
     queryKey: ["pokemon-all-species"],
     queryFn: getAllPokemonSpecies,
   });
@@ -52,7 +52,7 @@ export default function Pokedex() {
   });
 
   // 4. Fetch Type Data if selected
-  const { data: typeSource = [], isError: isErrorTypeData } = useQuery({
+  const { data: typeSource = [], isError: isErrorTypeData, isLoading: isLoadingTypeData } = useQuery({
     queryKey: ["type-source", selectedType],
     queryFn: () => getPokemonsByType(selectedType),
     enabled: selectedType !== "all",
@@ -94,7 +94,7 @@ export default function Pokedex() {
     enabled: paginatedList.length > 0,
   });
 
-  const isLoading = isLoadingDetails || (selectedType !== "all" && typeSource.length === 0 && !isErrorTypeData);
+  const isLoading = isLoadingDetails || isLoadingTypeData || isLoadingSpecies || isLoadingTypes;
   const isError = isErrorTypes || isErrorSpecies || isErrorGen || isErrorTypeData || isErrorDetails;
 
   // Handlers

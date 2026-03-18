@@ -43,7 +43,7 @@ export default function Home() {
   const types = useMemo(() => rawTypes.map((t: { name: string }) => t.name), [rawTypes]);
 
   // 3. Full List for Discovery Preview
-  const { data: discoverySource = [] } = useQuery({
+  const { data: discoverySource = [], isLoading: isLoadingDiscovery } = useQuery({
     queryKey: ["pokemon-discovery", selectedType],
     queryFn: () => selectedType === "all" ? getAllPokemonSpecies() : getPokemonsByType(selectedType),
     enabled: searchQuery.length > 0 || selectedType !== "all",
@@ -55,7 +55,7 @@ export default function Home() {
     queryFn: () => getPokemons(6, 0),
     enabled: searchQuery.length === 0 && selectedType === "all",
   }); */
-  const { data: standardPreviewSource } = useQuery({
+  const { data: standardPreviewSource, isLoading: isLoadingStandard } = useQuery({
   queryKey: ["pokemon-standard-preview"],
   queryFn: () => getPokemons(6, 0),
   enabled: searchQuery.length === 0 && selectedType === "all",
@@ -78,11 +78,13 @@ export default function Home() {
     return standardPreviewSource?.results ?? [];
   }, [discoverySource, standardPreviewSource, searchQuery, selectedType]);
 
-  const { data: displayPokemons = [], isLoading: isLoadingPreview } = useQuery({
+  const { data: displayPokemons = [], isLoading: isLoadingDetails } = useQuery({
     queryKey: ["pokemon-home-display", activeSource],
     queryFn: () => getDetailedPokemons(activeSource),
     enabled: activeSource.length > 0,
   });
+
+  const isLoadingPreview = isLoadingDetails || isLoadingDiscovery || isLoadingStandard;
 
   const handleVerTodos = () => {
     const params = new URLSearchParams();
