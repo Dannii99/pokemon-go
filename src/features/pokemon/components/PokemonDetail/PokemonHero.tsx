@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getTypeColor } from "@/utils/colors";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
 interface Props {
@@ -9,6 +8,7 @@ interface Props {
 }
 
 export const PokemonHero = ({ pokemon, species }: Props) => {
+  const navigate = useNavigate();
   const primaryType = pokemon.types[0].type.name;
   const typeColor = getTypeColor(primaryType);
   const description = species.flavor_text_entries.find(
@@ -16,6 +16,16 @@ export const PokemonHero = ({ pokemon, species }: Props) => {
   )?.flavor_text || species.flavor_text_entries.find(
     (e: any) => e.language.name === "en"
   )?.flavor_text;
+
+  const handleBack = () => {
+    // If there's history, go back to preserve state. 
+    // Otherwise fallback to main pokedex.
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/pokedex");
+    }
+  };
 
   return (
     <div className="relative w-full overflow-hidden rounded-[3rem] glass-dark border border-white/5 pb-12 lg:pb-0">
@@ -28,10 +38,13 @@ export const PokemonHero = ({ pokemon, species }: Props) => {
       />
       
       <div className="max-w-7xl mx-auto px-8 py-10">
-        <Link to="/pokedex" className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors mb-12 group">
+        <button 
+          onClick={handleBack} 
+          className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors mb-12 group"
+        >
             <ChevronLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Volver a la Pokédex</span>
-        </Link>
+        </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="order-2 lg:order-1 space-y-8">
@@ -39,7 +52,7 @@ export const PokemonHero = ({ pokemon, species }: Props) => {
                 <span className="text-primary font-black tracking-[0.3em] text-xl opacity-50 block">
                     #{String(pokemon.id).padStart(3, '0')}
                 </span>
-                <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white leading-none">
+                <h1 className="text-4xl md:text-6xl lg:text-8xl font-black uppercase tracking-tighter text-white leading-none">
                     {pokemon.name}
                 </h1>
                 <div className="flex flex-wrap gap-3 pt-2">

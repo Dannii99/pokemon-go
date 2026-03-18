@@ -410,3 +410,57 @@ Follow these project guides strictly:
 Desktop must remain the baseline; mobile and tablet should be adaptive variants of the existing layout, not a separate redesign.
 
 For small screens, prefer a bottom navigation or compact mobile shell over a collapsed desktop sidebar.
+
+## PROM ANTI ALUCINACION
+
+Task: Apply targeted improvements without overriding existing correct implementations.
+
+Goal:
+Fix or improve only the specific behavior described, without modifying or reverting already working or manually refined parts of the application.
+
+---
+
+Critical constraints (VERY IMPORTANT):
+
+- Do NOT rewrite or refactor entire files
+- Do NOT revert manual improvements already present in the codebase
+- Assume the current implementation includes intentional manual refinements
+- Preserve all working logic, UI, and structure unless it is directly related to the task
+- Make minimal, surgical changes only
+
+---
+
+Change strategy:
+
+- First, analyze the current implementation
+- Identify what is already working correctly
+- Only modify the exact parts that need adjustment
+- Avoid introducing alternative patterns if the current one is already valid
+
+---
+
+Anti-overwrite rule:
+
+- If something is already implemented and working, DO NOT change it just to match a different pattern
+- Do not reintroduce previous patterns that may have been replaced manually
+
+---
+
+Expected behavior:
+
+- Minimal diffs
+- No regressions
+- No unintended UI or logic changes
+- Respect current structure and improvements
+
+---
+
+Follow these project guides strictly:
+
+- /.ai/rules.md
+- /.ai/ownership.md
+- /.ai/architecture.md
+- /.ai/execution.md
+- /.ai/project-context.md
+- /.ai/ui-patterns.md
+- /.ai/ui-visual-guidelines.md

@@ -1,9 +1,10 @@
 import { getTypeColor } from "@/utils/colors";
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
+import { Check, Filter, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getGenerations, getGeneration } from "@/features/pokemon/services";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 // Helper to convert roman numerals to Gen numbers
 const romanToGen: Record<string, string> = {
@@ -35,6 +36,8 @@ export const PokedexSidebar = ({
   onGenSelect,
   totalSpeciesCount
 }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   // 1. Fetch all generation summaries
   const { data: gens = [] } = useQuery({
     queryKey: ["generations-list"],
@@ -71,11 +74,11 @@ export const PokedexSidebar = ({
     return list;
   }, [gensDetailsQueries.data, totalSpeciesCount]);
 
-  return (
-    <aside className="w-full lg:w-72 flex flex-col gap-10">
+  const SidebarContent = () => (
+    <>
       {/* Generations Section */}
       <div className="space-y-6">
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+        <h3 className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
           Generaciones
         </h3>
         <div className="flex flex-col gap-1">
@@ -87,7 +90,7 @@ export const PokedexSidebar = ({
             generations.map((gen) => (
                 <button
                   key={gen.id}
-                  onClick={() => onGenSelect(gen.id)}
+                  onClick={() => { onGenSelect(gen.id); setIsOpen(false); }}
                   className={cn(
                     "group flex items-center justify-between px-4 py-3 rounded-xl transition-all border",
                     selectedGen === gen.id 
@@ -108,12 +111,12 @@ export const PokedexSidebar = ({
 
       {/* Types Section */}
       <div className="space-y-6">
-        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+        <h3 className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
           Tipos
         </h3>
         <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={() => onTypeSelect("all")}
+            onClick={() => { onTypeSelect("all"); setIsOpen(false); }}
             className={cn(
               "px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border text-center",
               selectedType === "all" 
@@ -126,7 +129,7 @@ export const PokedexSidebar = ({
           {types.map((type) => (
             <button
               key={type}
-              onClick={() => onTypeSelect(type)}
+              onClick={() => { onTypeSelect(type); setIsOpen(false); }}
               className={cn(
                 "px-3 py-2.5 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest border text-center relative overflow-hidden group/chip",
                 selectedType === type 
@@ -142,6 +145,37 @@ export const PokedexSidebar = ({
           ))}
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Trigger */}
+      <div className="md:hidden flex items-center justify-between mb-4 px-1">
+        <Button
+          onClick={() => setIsOpen(!isOpen)}
+          variant="outline"
+          className="w-full h-12 rounded-xl glass border-white/10 flex items-center gap-3 font-black uppercase tracking-widest text-[10px]"
+        >
+          {isOpen ? <X className="size-4" /> : <Filter className="size-4" />}
+          {isOpen ? "Cerrar Filtros" : "Mostrar Filtros"}
+        </Button>
+      </div>
+
+      {/* Mobile Collapsible */}
+      <div className={cn(
+        "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
+        isOpen ? "max-h-[2000px] opacity-100 mb-8" : "max-h-0 opacity-0"
+      )}>
+        <div className="bg-white/5 rounded-2xl p-6 border border-white/5 space-y-10">
+          <SidebarContent />
+        </div>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-72 flex-col gap-10 sticky top-24">
+        <SidebarContent />
+      </aside>
+    </>
   );
 };

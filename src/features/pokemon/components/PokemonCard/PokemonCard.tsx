@@ -14,21 +14,21 @@ export const PokemonCard = ({ pokemon }: Props) => {
   return (
     <div 
       onClick={() => navigate(`/pokemon/${pokemon.id}`)}
-      className="group relative flex flex-col items-center rounded-xl glass-dark p-5 pt-16 transition-all duration-300 hover:-translate-y-2 hover:gold-glow min-h-[18.75rem] cursor-pointer"
+      className="group relative flex flex-col items-center rounded-xl glass-dark p-5 pt-12 md:pt-16 transition-all duration-300 hover:-translate-y-2 hover:gold-glow min-h-[16rem] md:min-h-[18.75rem] cursor-pointer"
       style={{
         background: `linear-gradient(180deg, rgba(26, 24, 16, 0.8) 0%, ${primaryTypeColor}22 100%)`
       }}
     >
       {/* Pokemon Image with Glow */}
-      <div className="absolute top-[-50px] flex justify-center w-full transition-transform duration-500 group-hover:scale-110">
+      <div className="absolute top-[-40px] md:top-[-50px] flex justify-center w-full transition-transform duration-500 group-hover:scale-110">
         <div 
-          className="absolute inset-0 blur-3xl opacity-20 rounded-full"
+          className="absolute inset-0 blur-2xl md:blur-3xl opacity-20 rounded-full"
           style={{ backgroundColor: primaryTypeColor }}
         />
         <img
           src={pokemon.image}
           alt={pokemon.name}
-          className="relative h-40 w-40 object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]"
+          className="relative h-32 w-32 md:h-40 md:w-40 object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]"
         />
       </div>
 
