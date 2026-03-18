@@ -98,6 +98,17 @@ export default function Pokedex() {
   const isLoading = isLoadingDetails || isLoadingTypeData || isLoadingSpecies || isLoadingTypes;
   const isError = isErrorTypes || isErrorSpecies || isErrorGen || isErrorTypeData || isErrorDetails;
 
+  // Track retries across reloads
+  useEffect(() => {
+    if (!isLoading && !isError) {
+      sessionStorage.removeItem("pokedex_retry_count");
+    }
+  }, [isLoading, isError]);
+
+  const retryCount = useMemo(() => 
+    parseInt(sessionStorage.getItem("pokedex_retry_count") || "0", 10)
+  , []);
+
   // Handlers
   const updateParams = (newParams: Record<string, string | number | undefined>) => {
     setSearchParams((prev) => {
@@ -158,14 +169,21 @@ export default function Pokedex() {
   };
 
   if (isError) {
+    const errorDescription = retryCount > 0 
+      ? `Intento de conexión #${retryCount + 1}. Parece que hay problemas persistentes con el servidor. Por favor, verifica tu conexión a internet.`
+      : "No pudimos conectar con la Pokédex. Por favor, intenta de nuevo más tarde.";
+
     return (
       <main className="min-h-screen bg-background text-foreground pb-20 pt-10">
         <div className="max-w-7xl mx-auto px-6">
           <ErrorState 
             title="Ocurrió un error al cargar los Pokémon"
-            description="No pudimos conectar con la Pokédex. Por favor, intenta de nuevo más tarde."
-            onRetry={() => window.location.reload()}
-            retryLabel="Reintentar conexión"
+            description={errorDescription}
+            onRetry={() => {
+              sessionStorage.setItem("pokedex_retry_count", (retryCount + 1).toString());
+              window.location.reload();
+            }}
+            retryLabel={retryCount > 0 ? "Intentar de nuevo" : "Reintentar conexión"}
           />
         </div>
       </main>
