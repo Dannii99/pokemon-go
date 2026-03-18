@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Check, Filter, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getGenerations, getGeneration } from "@/features/pokemon/services";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 
 // Helper to convert roman numerals to Gen numbers
@@ -26,6 +26,8 @@ interface Props {
   selectedGen: string;
   onGenSelect: (genId: string) => void;
   totalSpeciesCount: number;
+  isFilterOpen?: boolean;
+  onToggleFilter?: (open: boolean) => void;
 }
 
 export const PokedexSidebar = ({ 
@@ -34,9 +36,10 @@ export const PokedexSidebar = ({
   onTypeSelect, 
   selectedGen, 
   onGenSelect,
-  totalSpeciesCount
+  totalSpeciesCount,
+  isFilterOpen = false,
+  onToggleFilter
 }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
 
   // 1. Fetch all generation summaries
   const { data: gens = [] } = useQuery({
@@ -90,7 +93,7 @@ export const PokedexSidebar = ({
             generations.map((gen) => (
                 <button
                   key={gen.id}
-                  onClick={() => { onGenSelect(gen.id); setIsOpen(false); }}
+                  onClick={() => { onGenSelect(gen.id); onToggleFilter?.(false); }}
                   className={cn(
                     "group flex items-center justify-between px-4 py-3 rounded-xl transition-all border",
                     selectedGen === gen.id 
@@ -116,7 +119,7 @@ export const PokedexSidebar = ({
         </h3>
         <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={() => { onTypeSelect("all"); setIsOpen(false); }}
+            onClick={() => { onTypeSelect("all"); onToggleFilter?.(false); }}
             className={cn(
               "px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border text-center",
               selectedType === "all" 
@@ -129,7 +132,7 @@ export const PokedexSidebar = ({
           {types.map((type) => (
             <button
               key={type}
-              onClick={() => { onTypeSelect(type); setIsOpen(false); }}
+              onClick={() => { onTypeSelect(type); onToggleFilter?.(false); }}
               className={cn(
                 "px-3 py-2.5 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest border text-center relative overflow-hidden group/chip",
                 selectedType === type 
@@ -153,19 +156,19 @@ export const PokedexSidebar = ({
       {/* Mobile Trigger */}
       <div className="md:hidden flex items-center justify-between mb-4 px-1">
         <Button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => onToggleFilter?.(!isFilterOpen)}
           variant="outline"
           className="w-full h-12 rounded-xl glass border-white/10 flex items-center gap-3 font-black uppercase tracking-widest text-[10px]"
         >
-          {isOpen ? <X className="size-4" /> : <Filter className="size-4" />}
-          {isOpen ? "Cerrar Filtros" : "Mostrar Filtros"}
+          {isFilterOpen ? <X className="size-4" /> : <Filter className="size-4" />}
+          {isFilterOpen ? "Cerrar Filtros" : "Mostrar Filtros"}
         </Button>
       </div>
 
       {/* Mobile Collapsible */}
       <div className={cn(
         "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-        isOpen ? "max-h-[2000px] opacity-100 mb-8" : "max-h-0 opacity-0"
+        isFilterOpen ? "max-h-[2000px] opacity-100 mb-8" : "max-h-0 opacity-0"
       )}>
         <div className="bg-white/5 rounded-2xl p-6 border border-white/5 space-y-10">
           <SidebarContent />
@@ -173,7 +176,7 @@ export const PokedexSidebar = ({
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-72 flex-col gap-10 sticky top-24">
+      <aside className="hidden lg:flex w-72 flex-col gap-10 sticky top-24">
         <SidebarContent />
       </aside>
     </>
