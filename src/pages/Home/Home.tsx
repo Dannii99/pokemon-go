@@ -106,7 +106,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden">
       {/* Hero Banner Section */}
-      <section className="relative w-full min-h-[500px] lg:min-h-[600px] flex items-center justify-center overflow-hidden px-4 md:px-6 pt-16 md:pt-20 pb-28 md:pb-20">
+      <section className="relative w-full min-h-[108dvh] md:min-h-[600px] flex items-center justify-center overflow-hidden px-4 md:px-6 pt-16 md:pt-20 pb-28 md:pb-20">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(247,207,43,0.15)_0%,rgba(24,23,17,1)_80%)]" />
         <div className="absolute -top-[10%] -left-[5%] w-[60%] lg:w-[40%] h-[50%] lg:h-[60%] bg-primary/20 blur-[80px] lg:blur-[120px] rounded-full" />
         
@@ -117,7 +117,7 @@ export default function Home() {
             </div>
             
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black uppercase tracking-tighter text-white leading-[0.9] lg:leading-[0.8] drop-shadow-2xl">
+              <h1 className="text-5xl md:text-6xl lg:text-8xl font-black uppercase tracking-tighter text-white leading-[0.9] lg:leading-[0.8] drop-shadow-2xl">
                 {pokemonBanner.name}
               </h1>
               <div className="flex flex-wrap justify-center lg:justify-start gap-2 md:gap-3">
@@ -136,7 +136,7 @@ export default function Home() {
               Domina el campo de batalla con el poder legendario de {pokemonBanner.name}. Un icono de fuerza y fuego puro.
             </p>
 
-            <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-2">
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-2 mb-8">
               <Button 
                 size="lg" 
                 onClick={() => navigate(`/pokemon/${pokemonBanner.id}`)}
