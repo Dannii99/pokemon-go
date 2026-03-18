@@ -8,13 +8,14 @@ import {
 import { PokemonCard, PokedexHeader, PokedexSidebar } from "@/features/pokemon/components";
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Search, X, Hash } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X, Hash, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { EmptyState, ErrorState } from "@/components/ui/status";
 
 export default function Pokedex() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   const selectedType = searchParams.get("type") || "all";
   const selectedGen = searchParams.get("gen") || "all";
@@ -97,6 +98,17 @@ export default function Pokedex() {
   const isLoading = isLoadingDetails || isLoadingTypeData || isLoadingSpecies || isLoadingTypes;
   const isError = isErrorTypes || isErrorSpecies || isErrorGen || isErrorTypeData || isErrorDetails;
 
+  // Track retries across reloads
+  useEffect(() => {
+    if (!isLoading && !isError) {
+      sessionStorage.removeItem("pokedex_retry_count");
+    }
+  }, [isLoading, isError]);
+
+  const retryCount = useMemo(() => 
+    parseInt(sessionStorage.getItem("pokedex_retry_count") || "0", 10)
+  , []);
+
   // Handlers
   const updateParams = (newParams: Record<string, string | number | undefined>) => {
     setSearchParams((prev) => {
@@ -131,8 +143,8 @@ export default function Pokedex() {
     }
   };
 
-  const handlePageInputSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePageInputSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     const p = parseInt(pageInput, 10);
     if (!isNaN(p) && p >= 1 && p <= totalPages) {
       handlePageChange(p);
@@ -157,14 +169,21 @@ export default function Pokedex() {
   };
 
   if (isError) {
+    const errorDescription = retryCount > 0 
+      ? `Intento de conexión #${retryCount + 1}. Parece que hay problemas persistentes con el servidor. Por favor, verifica tu conexión a internet.`
+      : "No pudimos conectar con la Pokédex. Por favor, intenta de nuevo más tarde.";
+
     return (
       <main className="min-h-screen bg-background text-foreground pb-20 pt-10">
         <div className="max-w-7xl mx-auto px-6">
           <ErrorState 
             title="Ocurrió un error al cargar los Pokémon"
-            description="No pudimos conectar con la Pokédex. Por favor, intenta de nuevo más tarde."
-            onRetry={() => window.location.reload()}
-            retryLabel="Reintentar conexión"
+            description={errorDescription}
+            onRetry={() => {
+              sessionStorage.setItem("pokedex_retry_count", (retryCount + 1).toString());
+              window.location.reload();
+            }}
+            retryLabel={retryCount > 0 ? "Intentar de nuevo" : "Reintentar conexión"}
           />
         </div>
       </main>
@@ -184,6 +203,8 @@ export default function Pokedex() {
             selectedGen={selectedGen}
             onGenSelect={handleGenSelect}
             totalSpeciesCount={allSpecies.length}
+            isFilterOpen={isFilterOpen}
+            onToggleFilter={setIsFilterOpen}
           />
 
           <div className="flex-1 space-y-8">
@@ -265,6 +286,18 @@ export default function Pokedex() {
                     ))}
                   </div>
 
+                  {/* Mobile only filter button */}
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                        setIsFilterOpen(true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="md:hidden size-11 rounded-xl glass border-white/10 text-primary hover:bg-white/10"
+                  >
+                    <Filter className="size-4" />
+                  </Button>
+
                   <Button
                     variant="outline"
                     disabled={page === totalPages}
@@ -286,14 +319,24 @@ export default function Pokedex() {
 
                   <form onSubmit={handlePageInputSubmit} className="flex flex-col items-center gap-1">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Ir a</span>
-                    <div className="relative group">
-                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-                      <input
-                        type="text"
-                        value={pageInput}
-                        onChange={(e) => setPageInput(e.target.value)}
-                        className="w-20 h-8 pl-8 pr-2 rounded-lg bg-white/5 border border-white/5 focus:border-primary/20 outline-none text-center text-xs font-black text-white transition-all"
-                      />
+                    <div className="flex items-center gap-2">
+                      <div className="relative group">
+                        <Hash className="absolute left-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
+                        <input
+                          type="text"
+                          value={pageInput}
+                          onChange={(e) => setPageInput(e.target.value)}
+                          onBlur={() => handlePageInputSubmit()}
+                          className="w-20 h-8 pl-8 pr-2 rounded-lg bg-white/5 border border-white/5 focus:border-primary/20 outline-none text-center text-xs font-black text-white transition-all"
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        variant="outline"
+                        className="md:hidden h-8 px-3 rounded-lg glass border-white/10 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/10"
+                      >
+                        Ir
+                      </Button>
                     </div>
                   </form>
                 </div>
