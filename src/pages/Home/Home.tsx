@@ -285,7 +285,7 @@ export default function Home() {
             </div>
 
             <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4">
-                <Link to="/" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-white transition-colors">Inicio</Link>
+                <Link to="/home" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-white transition-colors">Inicio</Link>
                 <Link to="/pokedex" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-white transition-colors">Pokédex</Link>
                 <Link to="/favorites" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-white transition-colors">Favoritos</Link>
             </nav>

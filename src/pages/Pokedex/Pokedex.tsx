@@ -222,11 +222,12 @@ export default function Pokedex() {
                   clearLabel="Limpiar filtros"
                 />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-20 pt-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-20 pt-10">
                   {detailedPokemons.map((p, index) => (
                     <PokemonCard key={p.id ?? `${p.name}-${index}`} pokemon={p} />
                   ))}
                 </div>
+
               )}
             </div>
 

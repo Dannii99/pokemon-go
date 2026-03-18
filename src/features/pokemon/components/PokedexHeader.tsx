@@ -10,7 +10,7 @@ export const PokedexHeader = ({ totalCount }: Props) => {
     <div className="w-full flex flex-col md:flex-row md:items-center justify-between gap-4 pb-10">
       <div className="flex flex-col gap-2">
         <Link 
-          to="/" 
+          to="/home" 
           className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group mb-2"
         >
           <div className="bg-white/5 p-1 rounded-md border border-white/5 group-hover:border-primary/20 transition-all">
